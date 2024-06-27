@@ -8,6 +8,8 @@
 #' your database.
 #' @param dbName Character string, containing the name of the database you are 
 #' processing
+#' @param siteName Character string, containing the name of the site. Useful if 
+#' multiple site are use within the same database.
 #' @param echoes dataframe with the echo data from the data list created by the 
 #' function ‘extractDBData’ or a subset of it created by the function 
 #' ‘filterEchoData’. 
@@ -120,6 +122,7 @@
 #' # ===========================================================================
 #'   classSelection.mtr = c("insect")
 #'   mtrData = computeMTR(dbName                       = dbName, 
+#'                        siteName                     = NULL,
 #'                        echoes                       = dbData$echoData, 
 #'                        classSelection               = classSelection.mtr, 
 #'                        altitudeRange                = c(25, 1025),
@@ -144,6 +147,7 @@
 #' 
 # =============================================================================
 computeMTR = function(dbName, 
+                      siteName                     = NULL,
                       echoes, 
                       classSelection, 
                       altitudeRange,
@@ -164,6 +168,15 @@ computeMTR = function(dbName,
                       computePerDayNight           = FALSE, 
                       computePerDayCrepusculeNight = FALSE,
                       computeAltitudeDistribution  = TRUE){
+  
+# add optional site name to dbName
+# =============================================================================
+  if(siteName != NULL){
+    dbName_siteName = paste0(dbName, '_', siteName)  
+  } else {
+    dbName_siteName = dbName 
+  }
+  
 # Check whether only one of the options of computePerDayCrepusculeNight and 
 #  computePerDayNight has been chosen
 # =============================================================================
@@ -231,7 +244,7 @@ computeMTR = function(dbName,
 # =============================================================================
   if (saveBlindTimes){
     saveRDS(blindTimes, file = file.path(blindTimesOutputDir, 
-                                         paste0(dbName, "_overallBlindTimes.rds")))
+                                         paste0(dbName_siteName, "_overallBlindTimes.rds")))
   }
   
 # Compute observation time for each timebin
