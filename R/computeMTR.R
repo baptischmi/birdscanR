@@ -172,9 +172,9 @@ computeMTR = function(dbName,
 # add optional site name to dbName
 # =============================================================================
   if( is.null(siteName) ){
-    dbName_siteName = paste0(dbName, '_', siteName)  
-  } else {
     dbName_siteName = dbName 
+  } else {
+    dbName_siteName = paste0(dbName, '_', siteName)  
   }
   
 # Check whether only one of the options of computePerDayCrepusculeNight and 
