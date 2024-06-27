@@ -171,7 +171,7 @@ computeMTR = function(dbName,
   
 # add optional site name to dbName
 # =============================================================================
-  if(siteName != NULL){
+  if( is.null(siteName) ){
     dbName_siteName = paste0(dbName, '_', siteName)  
   } else {
     dbName_siteName = dbName 
