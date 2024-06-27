@@ -218,9 +218,14 @@ computeMTR = function(dbName,
 # compute blindtimes
 # =====================================================================
   message("Calculating blind times..")
-  blindTimes = mergeVisibilityAndManualBlindTimes(visibilityData   = visibilityData, 
-                                                  manualBlindTimes = manualBlindTimes, 
-                                                  protocolData     = protocolData)
+  if( any(names(visibilityData) == 'type') ) # blindTimes have already be merged and include the 'type' column
+  {
+    blindTimes = visibilityData
+  } else { # merge the visibility (and manual blind times) with the protocol data
+    blindTimes = mergeVisibilityAndManualBlindTimes(visibilityData   = visibilityData, 
+                                                    manualBlindTimes = manualBlindTimes, 
+                                                    protocolData     = protocolData)
+  }
   
 # Save blind times to file, if requested
 # =============================================================================
