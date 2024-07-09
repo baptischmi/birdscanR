@@ -3,13 +3,25 @@
 #' @author Baptiste Schmid, \email{baptiste.schmid@@vogelwarte.ch};
 #' Fabian Hertner, \email{fabian.hertner@@swiss-birdradar.com}; 
 #' Birgen Haest, \email{birgen.haest@@vogelwarte.ch}
-#' @description The function \code{compileData} aim to filter database-extracts and save metadata used to compute MTR \code{computeMTR}. The function \code{compileData} is a list of filtered data and parameters. It takes the output from \code{extractDbData} 
+#' @description The function \code{compileData} aim to filter database-extracts and 
+#' save metadata used to compute MTR \code{computeMTR}. The function \code{compileData} 
+#' is a list of filtered data and parameters. It takes the output from \code{extractDbData} 
 #' and trunk the needed dataset to the restricted settings, e.g. time frame, pulse type.
-#' @param echoData dataframe with the echo data from the data list created by the function \code{extractDBData}.
-#' @param protocolData dataframe with the protocol data from the data list created by the function \code{extractDBData} or a subset of it created by the function \code{filterProtocolData}. Echoes not detected during the listed protocols will be excluded.
-#' @param protocolData dataframe resulting from the function \code{extractDbData}.
-#' @param pulseTypeSelection character vector with the pulse types which should be included in the subset. Options: “S”, “M”, “L” (short-, medium-, long-pulse). Default is NULL: no filtering applied based on pulseType.
-#' @param rotationSelection numeric vector to select the operation modes with and/or without antenna rotation. Options: 0, 1. (0 = no rotation, 1 = rotation). Default is NULL: no filtering applied based on rotation mode.
+#' @param echoData dataframe with the echo data from the data list created by 
+#' the function \code{extractDBData}.
+#' @param protocolData dataframe with the protocol data from the data list created by
+#'  the function \code{extractDBData}. Echoes not detected during the listed protocols 
+#'  will be excluded.
+#' @param BlindTimesData dataframe with the manual blind times created by 
+#' the function \code{loadManualBlindTimes}. 
+#' It include the automated blind times induced by changes in measurment protocol, 
+#' and blind time added manually to remove periods of incoherent data collection.
+#' @param pulseTypeSelection character vector with the pulse types which should 
+#' be included in the subset. Options: “S”, “M”, “L”, i.e. short-, medium-, long-pulse, respectively. 
+#' Default is NULL: no filtering applied based on pulseType.
+#' @param rotationSelection numeric vector to select the operation modes with and/or without
+#'  antenna rotation. Options: 0, 1. (0 = no rotation, 1 = rotation). 
+#'  Default is NULL: no filtering applied based on rotation mode.
 #' @param timeRangeTargetTZ Character vector of length 2, with start and end of 
 #' time range, formatted as "%Y-%m-%d %H:%M". Echoes outside the time range will
 #'  be excluded.
@@ -21,13 +33,12 @@
 #' with a lower class probability will be excluded.
 #' @param altitudeRange_AGL numeric vector of length 2 with start and end of the 
 #' altitude range. Echoes outside the altitude range will be excluded.
-#' @param manualBlindTimes dataframe with the manual blind times created by the 
-#' function \code{loadManualBlindTimes}.
-#' @param echoValidator logical, if set to TRUE, echoes labelled by the echo 
-#' validator as “non-bio scatterer” will be excluded. If set to FALSE, all 
-#' echoes are included.
+#' @param echoValidator logical, If set to FALSE - default -, no additional filters 
+#' is applied; if set to TRUE, echoes labelled by the echo validator as “non-bio scatterer” 
+#' will be excluded..
 #' 
-#' @return Returns filtered data table (echo, protocol, blindTimes, sunriseAndSunset, site, radar) and necessary paramters as input for \code{computeMTR}.
+#' @return Returns filtered data table - echo, protocol, blindTimes, sunriseSunset, 
+#' radarSite - and necessary parameters as input for \code{computeMTR}.
 #' @export
 #' @examples
 #' \dontrun{
@@ -59,7 +70,6 @@ compileData = function(
     timeRangeTargetTZ    = timeRangeTargetTZ,
     pulseTypeSelection   = pulseTypeSelection,
     rotationSelection    = rotationSelection,
-    # targetTimeZone       = targetTimeZone, # redundant: not a filter, and also incldued in the radarSiteData.
     classSelection       = classSelection,
     classProbCutOff      = classProbCutOff,
     altitudeRange_AGL    = altitudeRange_AGL,
@@ -85,13 +95,13 @@ compileData = function(
                'num',
                'logical'
     ),
-    "description" = c('Time range (beginning to end period) of data collection in the time zone sued for analyses.',
+    "description" = c('Time range (from beginning to end) of the filter period, in the time zone used for analyses.',
                       'Pulse type is either "S" for Short-pulse, "M" for Medium pulse, or "L" for Long-pulse. See radar table for pulse duration',
                       'Rotation is either "0"when the antenna is static, or "1" if the antena is rotating on its vertical axis. Flight speed and direction available only if the anteanna is rotating',
                       'List of class - can be a subset of all avaialble classes',
                       'PostHoc filter on classification. if "0", all echoes are used, if e.g. 0.4, only echoes with a class probability >= 0.4 are kept.',
                       'Altitude range (agl) from the lowest to the highest.',
-                      'Wether to use the PostHoc echo validator as additional filter. Per default set on "FALSE".'
+                      'If set to FALSE (default), no additional filters is applied; if set to TRUE, echoes labelled by the echo validator as “non-bio scatterer” will be excluded.'
     )
   )
   
