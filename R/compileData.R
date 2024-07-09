@@ -16,6 +16,7 @@
 #' the function \code{loadManualBlindTimes}. 
 #' It include the automated blind times induced by changes in measurment protocol, 
 #' and blind time added manually to remove periods of incoherent data collection.
+#' @param radrSiteData
 #' @param pulseTypeSelection character vector with the pulse types which should 
 #' be included in the subset. Options: “S”, “M”, “L”, i.e. short-, medium-, long-pulse, respectively. 
 #' Default is NULL: no filtering applied based on pulseType.
@@ -145,10 +146,10 @@ compileData = function(
   
   # Filter Site & Radar data
   # =============================================================================
-  site$targetTimeZone = targetTimeZone
+  radarSiteData$targetTimeZone = targetTimeZone
   
   mycols_site <- c("radarID", "siteID", "siteCode", "siteName", "siteDesc",             
-    "timeZone_tagetTZ", # "timeZone_originTZ",
+    "targetTimeZone", # "originTimeZone",
     "projectStart_originTZ", "projectStart_targetTZ", "projectEnd_originTZ", "projectEnd_targetTZ",
     "longitude", "latitude", "altitude",
     "customer"
@@ -335,7 +336,7 @@ compileData = function(
                                   classSelection    = classSelection, 
                                   classProbCutOff   = classProbCutOff, 
                                   altitudeRange_AGL = altitudeRange_AGL, 
-                                  manualBlindTimes  = manualBlindTimes, 
+                                  manualBlindTimes  = BlindTimesDataSubset[which(BlindTimesDataSubset$type != "protocolChange"), ], 
                                   echoValidator     = echoValidator) 
   
   #-----------------------------------------------------------------------------
