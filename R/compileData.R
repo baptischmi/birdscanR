@@ -357,7 +357,7 @@ compileData = function(
   
   # Return the filtered protocol and echo data
   # =============================================================================
-  filteredData = list(
+  compiledData = list(
     echoData           = echoDataSubset,
     protocolData       = protocolDataSubset,
     blindTimesData     = BlindTimesDataSubset,
@@ -367,5 +367,5 @@ compileData = function(
     metaData           = ls_metaData
                       )
   
-  return(filteredData)
+  return(compiledData)
 }
