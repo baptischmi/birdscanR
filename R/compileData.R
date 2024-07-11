@@ -439,7 +439,7 @@ compileData = function(
     
     # rotationSelection for fileName
     # =========================================================================
-    if (!is.null(rotationSelection) && any(rotationSelection &in& c(1, 0)) == 2){
+    if (!is.null(rotationSelection) && any(rotationSelection %in% c(1, 0)) == 2){
       rotationSelection_char = paste( sort(rotationSelection), collapse = "")
       rotationSelection_char = paste0('rotation', rotationSelection_char, sep ="")    
       fileName = paste(fileName, rotationSelection_char, sep = "_")
