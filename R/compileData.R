@@ -429,16 +429,49 @@ compileData = function(
       fileName = paste(fileName, altitude, sep = "_")
     }
     
+    # pulseTypeSelection for fileName
+    # =========================================================================
+    if (!is.null(pulseTypeSelection) && length(pulseTypeSelection) == 1){
+      pulseTypeSelection_char = paste( sort(pulseTypeSelection), collapse = "")
+      pulseTypeSelection_char = paste0('pulse', pulseTypeSelection_char, sep ="")    
+      fileName = paste(fileName, pulseTypeSelection_char, sep = "_")
+    }     
+    
+    # rotationSelection for fileName
+    # =========================================================================
+    if (!is.null(rotationSelection) && any(rotationSelection &in& c(1, 0)) == 2){
+      rotationSelection_char = paste( sort(rotationSelection), collapse = "")
+      rotationSelection_char = paste0('rotation', rotationSelection_char, sep ="")    
+      fileName = paste(fileName, rotationSelection_char, sep = "_")
+    }     
+    
     # classSelection for fileName
     # =========================================================================
     if (!is.null(classSelection)){
-      # classes = paste(classAbbreviations$abbr[match(classSelection, 
-      #                                                classAbbreviations$class)], 
-      #                  collapse = "")
-      fileName = paste(fileName, classSelection, sep = "_")
+      classAbbreviations$class <- trimws(classAbbreviations$class, which = "right")
+      classAbbreviations$abbr <- trimws(classAbbreviations$abbr, which = "right")
+      classes = paste(classAbbreviations$abbr[which(classAbbreviations$class %in% 
+                                                      classSelection)], 
+                      collapse = "")
+      fileName = paste(fileName, classes, sep = "_")
     } else {
       fileName = paste(fileName, "allClasses", sep = "_")
     }
+    
+    # classProbCutOff for fileName
+    # =========================================================================
+    if (!is.null(classProbCutOff) && length(classProbCutOff) == 1){
+      classProbCutOff_char <- substr(classProbCutOff, 3, 4)
+      classProbCutOff_char = paste0('classProbCutOff.', classProbCutOff_char, sep ="")    
+      fileName = paste(fileName, classProbCutOff_char, sep = "_")
+    }     
+    
+    # echoValidator        = echoValidator
+    # =========================================================================
+    if (!is.null(echoValidator) && length(echoValidator) == 1){
+      echoValidator_char = paste0('echoValidator', echoValidator, sep ="")    
+      fileName = paste(fileName, echoValidator_char, sep = "_")
+    }     
     
     # Add suffix from tagOutputFile to fileName
     # =========================================================================
@@ -453,10 +486,10 @@ compileData = function(
     fileName = paste0(fileName, ".rds")
     
     
-    # pulseTypeSelection   = pulseTypeSelection,
-    # rotationSelection    = rotationSelection,
-    # classProbCutOff      = classProbCutOff,
-    # echoValidator        = echoValidator
+    # 
+    # 
+    # 
+    # 
     
     
     #                               "pulseType", pulseTypeSelection, "_",
@@ -464,7 +497,8 @@ compileData = function(
     #                               "echoVal", as.character(useEchoValidator), 
     #                               ".rds"))
     filePathName <- file.path(filePath, fileName)
-    saveRDS(compiledData, file = filePathName)
+    print(filePathName)
+    # saveRDS(compiledData, file = filePathName)
     
   }
   
