@@ -12,11 +12,12 @@
 #' @param protocolData dataframe with the protocol data from the data list created by
 #'  the function \code{extractDBData}. Echoes not detected during the listed protocols 
 #'  will be excluded.
-#' @param BlindTimesData dataframe with the manual blind times created by 
+#' @param blindTimesData dataframe with the manual blind times created by 
 #' the function \code{loadManualBlindTimes}. 
 #' It include the automated blind times induced by changes in measurment protocol, 
 #' and blind time added manually to remove periods of incoherent data collection.
 #' @param radrSiteData
+#' @param dbName Name of the database. Can be a useful meta data.
 #' @param pulseTypeSelection character vector with the pulse types which should 
 #' be included in the subset. Options: “S”, “M”, “L”, i.e. short-, medium-, long-pulse, respectively. 
 #' Default is NULL: no filtering applied based on pulseType.
@@ -36,7 +37,9 @@
 #' altitude range. Echoes outside the altitude range will be excluded.
 #' @param echoValidator logical, If set to FALSE - default -, no additional filters 
 #' is applied; if set to TRUE, echoes labelled by the echo validator as “non-bio scatterer” 
-#' will be excluded..
+#' will be excluded.
+#' @param filePath If given, the data-list is saved as RDS.
+#' @param tagOutputFile Vector of two elements for prefix & suffix to file name, given 'filePath' is not NULL.
 #' 
 #' @return Returns filtered data table - echo, protocol, blindTimes, sunriseSunset, 
 #' radarSite - and necessary parameters as input for \code{computeMTR}.
@@ -49,9 +52,10 @@
 compileData = function( 
                       echoData           = NULL, 
                       protocolData       = NULL,
-                      BlindTimesData     = NULL,
+                      blindTimesData     = NULL,
                       sunriseSunsetData  = NULL,
                       radarSiteData      = NULL,
+                      dbName             = NULL,
                       pulseTypeSelection = NULL, 
                       rotationSelection  = NULL,
                       timeRangeTargetTZ  = NULL,
@@ -59,7 +63,10 @@ compileData = function(
                       classSelection     = NULL, 
                       classProbCutOff    = NULL, 
                       altitudeRange_AGL  = NULL, 
-                      echoValidator      = FALSE){
+                      echoValidator      = FALSE,
+                      savePath           = NULL,
+                      tagOutputFile      = c(NULL, NULL)
+                      ){
   
   # set the time window
   startTime = timeRangeTargetTZ[1]
@@ -260,10 +267,10 @@ compileData = function(
   # Filter blindTimes data
   # =============================================================================
   # restrict the time range
-  if(!any( names(BlindTimesData) == 'type') ) warning("The 'type' column is missing in the dataset 'BlindTimesData'. Use the output of the function 'mergeVisibilityAnd ManualBlinfTime'.")
-  TimesInd = (BlindTimesData$start_targetTZ < stopTime) & 
-    (BlindTimesData$stop_targetTZ > startTime)
-  BlindTimesDataSubset =  BlindTimesData[TimesInd, ]
+  if(!any( names(blindTimesData) == 'type') ) warning("The 'type' column is missing in the dataset 'blindTimesData'. Use the output of the function 'mergeVisibilityAnd ManualBlinfTime'.")
+  TimesInd = (blindTimesData$start_targetTZ < stopTime) & 
+    (blindTimesData$stop_targetTZ > startTime)
+  blindTimesDataSubset =  blindTimesData[TimesInd, ]
   
   #-----------------------------------------------------------------------------
   # meta data
@@ -336,32 +343,22 @@ compileData = function(
                                   classSelection    = classSelection, 
                                   classProbCutOff   = classProbCutOff, 
                                   altitudeRange_AGL = altitudeRange_AGL, 
-                                  manualBlindTimes  = BlindTimesDataSubset[which(BlindTimesDataSubset$type != "protocolChange"), ], 
+                                  manualBlindTimes  = blindTimesDataSubset[which(blindTimesDataSubset$type != "protocolChange"), ], 
                                   echoValidator     = echoValidator) 
   
-  #-----------------------------------------------------------------------------
-  # meta data
-  metaEcho <- data.frame(
-    "colname" = c('name'
-                  
-    ),
-    "type" = c('char'
-               
-    ),
-    "description" = c('dummy'
-    )
-  )
-  
-  
-  #-----------------------------------------------------------------------------
-  # meta data
+
+ 
+  # compile meta data into a list
+  # =============================================================================
   ls_metaData <- list(
     echoData          = metaEcho,
     protocolData      = metaProtocol,
     blindTimesData    = metaBlindTimes,
     sunriseSunsetData = metaSunriseSunset,
     radarSiteData     = metaRadarSiteData,
-    filterParameters  = metaFilters
+    filterParameters  = metaFilters,
+    database          = dbName, # at the moment, only keep the name of the database, but additional information could be used: version of BirdscanR-package, name of the person who extracted the data, etc.
+    birdscanR         = packageVersion("birdScanR") # classifier version is included in the echo-dataset
   )
   
 
@@ -371,12 +368,90 @@ compileData = function(
   compiledData = list(
     echoData           = echoDataSubset,
     protocolData       = protocolDataSubset,
-    blindTimesData     = BlindTimesDataSubset,
+    blindTimesData     = blindTimesDataSubset,
     sunriseSunsetData  = sunriseSunsetDataSubset,
     radarSiteData      = radarSiteData,
     filterParameters   = ls_filters,
     metaData           = ls_metaData
-                      )
+  )
+  
+  
+  # save output
+  if( !is.null(filePath) ){
+    # =============================================================================
+    # create filename to save plot
+    # =========================================================================
+    fileName = "compiledData"
+    
+    # Add prefix from tagOutputFile to fileName
+    # =========================================================================
+    if (!is.null(tagOutputFile[1]) && length(tagOutputFile) == 2){
+      prefix = tagOutputFile[1]     
+      fileName = paste(prefix, fileName, sep = "_")
+    }     
+    
+    # dbName for fileName
+    # =========================================================================
+    if (!is.null(dbName) && length(dbName) == 1){
+        fileName = paste(fileName, dbName, sep = "_")
+    } 
+    
+    # time range for fileName
+    # =========================================================================
+    if (!is.null(timeRangeTargetTZ) && length(timeRangeTargetTZ) == 2){
+      startTime = format(timeRangeTargetTZ[1], "%Y%m%d")
+      stopTime = format(timeRangeTargetTZ[2], "%Y%m%d")
+      time = paste(startTime, stopTime, sep = "-")
+      fileName = paste(fileName, time, sep = "_")
+    } 
+    
+    # altitude range for fileName
+    # =========================================================================
+    if (!is.null(altitudeRange) && length(altitudeRange) == 2){
+      altitudeRangeStart = paste0(altitudeRange[1], "m")
+      altitudeRangeStop = paste0(altitudeRange[2], "m")
+      altitude = paste(altitudeRangeStart, altitudeRangeStop, sep = "-")
+      fileName = paste(fileName, altitude, sep = "_")
+    }
+    
+    # classSelection for fileName
+    # =========================================================================
+    if (!is.null(classSelection)){
+      # classes = paste(classAbbreviations$abbr[match(classSelection, 
+      #                                                classAbbreviations$class)], 
+      #                  collapse = "")
+      fileName = paste(fileName, classSelection, sep = "_")
+    } else {
+      fileName = paste(fileName, "allClasses", sep = "_")
+    }
+    
+    # Add suffix from tagOutputFile to fileName
+    # =========================================================================
+    if (!is.null(tagOutputFile[2]) && length(tagOutputFile) == 2){
+      suffix = tagOutputFile[2]     
+      fileName = paste(fileName, suffix, sep = "_")
+    }     
+    
+    
+    # file name
+    # =========================================================================
+    fileName = paste0(fileName, ".rds")
+    
+    
+    # outputFile = file.path(mainOutputDir, 
+    #                        paste0(siteName, "_compiled_",
+    #                               "pulseType", pulseTypeSelection, "_",
+    #                               "cut", classProbCutoff.char, "_",
+    #                               "altRange", paste(altitudeRange, collapse = "to"), "_", 
+    #                               "timeRange", paste(format(as.Date(timeRangeTargetTZ), "%Y%m%d"), 
+    #                                                  collapse = "to"), 
+    #                               "_",
+    #                               "echoVal", as.character(useEchoValidator), 
+    #                               ".rds"))
+    saveRDS(compiledData, fileName)
+    
+  }
+  
   
   return(compiledData)
 }
