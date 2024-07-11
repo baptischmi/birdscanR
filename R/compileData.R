@@ -346,7 +346,22 @@ compileData = function(
                                   manualBlindTimes  = blindTimesDataSubset[which(blindTimesDataSubset$type != "protocolChange"), ], 
                                   echoValidator     = echoValidator) 
   
-
+  #-----------------------------------------------------------------------------
+  # meta data
+  metaEcho <- data.frame(
+    "colname" = c("dummy" 
+                  
+    ),
+    "type" = c('dummy'
+               
+    ),
+    "description" = c('dummy'
+                      
+    )
+  )
+  
+  
+  
  
   # compile meta data into a list
   # =============================================================================
@@ -377,7 +392,7 @@ compileData = function(
   
   
   # save output
-  if( !is.null(filePath) ){
+  if( !is.null(filePath) && length(filePath) == 1){
     # =============================================================================
     # create filename to save plot
     # =========================================================================
@@ -407,9 +422,9 @@ compileData = function(
     
     # altitude range for fileName
     # =========================================================================
-    if (!is.null(altitudeRange) && length(altitudeRange) == 2){
-      altitudeRangeStart = paste0(altitudeRange[1], "m")
-      altitudeRangeStop = paste0(altitudeRange[2], "m")
+    if (!is.null(altitudeRange_AGL) && length(altitudeRange_AGL) == 2){
+      altitudeRangeStart = paste0(altitudeRange_AGL[1], "m")
+      altitudeRangeStop = paste0(altitudeRange_AGL[2], "m")
       altitude = paste(altitudeRangeStart, altitudeRangeStop, sep = "-")
       fileName = paste(fileName, altitude, sep = "_")
     }
@@ -438,17 +453,18 @@ compileData = function(
     fileName = paste0(fileName, ".rds")
     
     
-    # outputFile = file.path(mainOutputDir, 
-    #                        paste0(siteName, "_compiled_",
+    # pulseTypeSelection   = pulseTypeSelection,
+    # rotationSelection    = rotationSelection,
+    # classProbCutOff      = classProbCutOff,
+    # echoValidator        = echoValidator
+    
+    
     #                               "pulseType", pulseTypeSelection, "_",
     #                               "cut", classProbCutoff.char, "_",
-    #                               "altRange", paste(altitudeRange, collapse = "to"), "_", 
-    #                               "timeRange", paste(format(as.Date(timeRangeTargetTZ), "%Y%m%d"), 
-    #                                                  collapse = "to"), 
-    #                               "_",
     #                               "echoVal", as.character(useEchoValidator), 
     #                               ".rds"))
-    saveRDS(compiledData, fileName)
+    filePathName <- file.path(filePath, fileName)
+    saveRDS(compiledData, file = filePathName)
     
   }
   
