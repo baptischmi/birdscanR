@@ -64,7 +64,7 @@ compileData = function(
                       classProbCutOff    = NULL, 
                       altitudeRange_AGL  = NULL, 
                       echoValidator      = FALSE,
-                      savePath           = NULL,
+                      filePath           = NULL,
                       tagOutputFile      = c(NULL, NULL)
                       ){
   
