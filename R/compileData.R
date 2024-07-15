@@ -416,16 +416,16 @@ compileData = function(
     if (!is.null(timeRangeTargetTZ) && length(timeRangeTargetTZ) == 2){
       startTime = format(timeRangeTargetTZ[1], "%Y%m%d")
       stopTime = format(timeRangeTargetTZ[2], "%Y%m%d")
-      time = paste(startTime, stopTime, sep = "-")
+      time = paste(startTime, stopTime, sep = "to")
       fileName = paste(fileName, time, sep = "_")
     } 
     
     # altitude range for fileName
     # =========================================================================
     if (!is.null(altitudeRange_AGL) && length(altitudeRange_AGL) == 2){
-      altitudeRangeStart = paste0(altitudeRange_AGL[1], "m")
+      altitudeRangeStart = altitudeRange_AGL[1]
       altitudeRangeStop = paste0(altitudeRange_AGL[2], "m")
-      altitude = paste(altitudeRangeStart, altitudeRangeStop, sep = "-")
+      altitude = paste(altitudeRangeStart, altitudeRangeStop, sep = "to")
       fileName = paste(fileName, altitude, sep = "_")
     }
     
@@ -439,7 +439,7 @@ compileData = function(
     
     # rotationSelection for fileName
     # =========================================================================
-    if (!is.null(rotationSelection) && any(rotationSelection %in% c(1, 0)) == 2){
+    if ( !is.null(rotationSelection) && any(rotationSelection %in% c(1, 0)) ){
       rotationSelection_char = paste( sort(rotationSelection), collapse = "")
       rotationSelection_char = paste0('rotation', rotationSelection_char, sep ="")    
       fileName = paste(fileName, rotationSelection_char, sep = "_")
@@ -466,9 +466,9 @@ compileData = function(
       fileName = paste(fileName, classProbCutOff_char, sep = "_")
     }     
     
-    # echoValidator        = echoValidator
+    # echoValidator for fileName
     # =========================================================================
-    if (!is.null(echoValidator) && length(echoValidator) == 1){
+    if (echoValidator && length(echoValidator) == 1){
       echoValidator_char = paste0('echoValidator', echoValidator, sep ="")    
       fileName = paste(fileName, echoValidator_char, sep = "_")
     }     
@@ -497,8 +497,8 @@ compileData = function(
     #                               "echoVal", as.character(useEchoValidator), 
     #                               ".rds"))
     filePathName <- file.path(filePath, fileName)
-    print(filePathName)
-    # saveRDS(compiledData, file = filePathName)
+    # print(filePathName)
+    saveRDS(compiledData, file = filePathName)
     
   }
   
