@@ -8,6 +8,6 @@ There are currently no downstream dependencies for this package.
 
 ## Changes since last version
 
-*   Removed dependency on the retiring maptools package
-*   Added functionality: Add sample classification and mtr calculation for crepuscularMorning, day, crepuscularNight, and night. 
-*   Made some bug fixes: Small bug fixes in the two plotting functions.
+*   Made sure '.github' folder is not included in package build
+*   Added functionality: Add the functions 'computeDensity()', 'getBatClassification()', and 'reclassToBats()' 
+*   Made a bug fix: Small bug fix in the 'computeMTR()' function related to variable scope.

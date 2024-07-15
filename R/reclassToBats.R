@@ -37,14 +37,14 @@
 #'                          siteLocation                   = siteLocation, 
 #'                          sunOrCivil                   = sunOrCivil,
 #'                          crepuscule                     = "nauticalSolar")
-#' }
-#' 
+#' #' 
 #' # Reclass To Bats
 #' # ===========================================================================
-#' dbData$echoData <- reclassToBats( echoData = dbData$echoData,
-#'                                   batClassProbabilitiesAndMtrFactors = dbData$batClassProbabilitiesAndMtrFactors,
-#'                                   reclassToBatCutoff = 0.5 )
-#'
+#'   dbData$echoData = reclassToBats(echoData = dbData$echoData,
+#'                                   batClassProbabilitiesAndMtrFactors = 
+#'                                       dbData$batClassProbabilitiesAndMtrFactors,
+#'                                   reclassToBatCutoff = 0.5)
+#' }
 reclassToBats = function( echoData = NULL,
                           batClassProbabilitiesAndMtrFactors = NULL,
                           reclassToBatCutoff = -1 )
