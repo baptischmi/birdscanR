@@ -462,7 +462,6 @@ compileData = function(
     # classSelection for fileName
     # =========================================================================
     if (!is.null(classSelection)){
-      classAbbreviations = birdScanR::classAbbreviations
       classAbbreviations$class <- trimws(classAbbreviations$class, which = "right")
       classAbbreviations$abbr <- trimws(classAbbreviations$abbr, which = "right")
       classes = paste(classAbbreviations$abbr[which(classAbbreviations$class %in% 
