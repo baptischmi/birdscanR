@@ -479,29 +479,33 @@ compileData = function(
       suffix = tagOutputFile[2]     
       fileName = paste(fileName, suffix, sep = "_")
     }     
-    
-    
-    # file name
+ 
+    # save RDS
     # =========================================================================
-    fileName = paste0(fileName, ".rds")
+    rdsFileName = paste0(fileName, ".rds")
     
+    # add output folder 'filePath'
+    rdsFilePathName <- file.path(filePath, rdsFileName)# ; print(filePathName)
+   
+    saveRDS(compiledData, file = rdsFilePathName)
     
-    # 
-    # 
-    # 
-    # 
-    
-    
-    #                               "pulseType", pulseTypeSelection, "_",
-    #                               "cut", classProbCutoff.char, "_",
-    #                               "echoVal", as.character(useEchoValidator), 
-    #                               ".rds"))
-    filePathName <- file.path(filePath, fileName)
-    # print(filePathName)
-    saveRDS(compiledData, file = filePathName)
-    
-  }
-  
-  
+    # Save CSV
+    # =========================================================================
+    if(saveCSV){
+      csvDirPath = file.path(filePath, fileName)
+      
+      # Create a directory to store the CSV files (optional)
+      dir.create(csvDirPath, showWarnings = FALSE)
+   
+      # Loop through each element in the list and save as CSV
+      for (name in names(compiledData)) {
+        file_path <- file.path(csvDirPath, paste0(name, ".csv"))
+        write.csv(compiledData[[name]], file = file_path, row.names = FALSE)
+      } 
+         
+    }
+   
+  } # end of if( !is.null(filePath) && length(filePath) == 1){
+
   return(compiledData)
 }
