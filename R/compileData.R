@@ -301,7 +301,8 @@ compileData = function(
     )
   )
   
-  blindTimesDataSubset =  blindTimesDataSubset[, metaBlindTimes$colname]
+  # need to wait for update of the function mergeVisibilityAndManualBlindTimes 
+  # blindTimesDataSubset =  blindTimesDataSubset[, metaBlindTimes$colname]
   
   
   # Filter twilight data 
