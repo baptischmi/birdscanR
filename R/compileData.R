@@ -152,6 +152,7 @@ compileData = function(
     )
   )
   
+  protocolDataSubset =  protocolDataSubset[, metaProtocol$colname]
   
   # Filter Site & Radar data
   # =============================================================================
@@ -350,18 +351,23 @@ compileData = function(
   
   #-----------------------------------------------------------------------------
   # meta data
-  metaEcho <- data.frame(
-    "colname" = c("dummy" 
-                  
-    ),
-    "type" = c('dummy'
-               
-    ),
-    "description" = c('dummy'
-                      
-    )
-  )
+  metaEcho = NULL
+  # metaEcho <- data.frame(
+  #   "colname" = c("dummy" 
+  #                 
+  #   ),
+  #   "type" = c('dummy'
+  #              
+  #   ),
+  #   "description" = c('dummy'
+  #                     
+  #   )
+  # )
   
+  if(!is.null(metaEcho)){
+    # subset to target columns
+     echoDataSubset =  echoDataSubset[, metaEcho$colname]
+  } 
   
   
  
@@ -499,12 +505,20 @@ compileData = function(
       # Create a directory to store the CSV files (optional)
       dir.create(csvDirPath, showWarnings = FALSE)
    
-      # Loop through each element in the list and save as CSV
+      # Loop through each element in the list
+      # Loop through each element in the list
       for (name in names(compiledData)) {
-        file_path <- file.path(csvDirPath, paste0(name, ".csv"))
-        write.csv(compiledData[[name]], file = file_path, row.names = FALSE)
-      } 
-         
+        if (name %in% c("filterParameters", "metaData")) {
+          # Save as YAML for list elements
+          file_path <- file.path(csvDirPath, paste0(name, ".yaml"))
+          yaml::write_yaml(compiledData[[name]], file = file_path)
+        } else {
+          # Save as CSV for table elements
+          file_path <- file.path(csvDirPath, paste0(name, ".csv"))
+          write.csv(compiledData[[name]], file = file_path, row.names = FALSE)
+        }
+      }
+      
     }
    
   } # end of if( !is.null(filePath) && length(filePath) == 1){
