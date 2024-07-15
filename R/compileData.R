@@ -301,6 +301,9 @@ compileData = function(
     )
   )
   
+  blindTimesDataSubset =  blindTimesDataSubset[, metaBlindTimes$colname]
+  
+  
   # Filter twilight data 
   # =============================================================================
   # restrict the time range on sunStart and sunStop
@@ -335,6 +338,8 @@ compileData = function(
                       
     )
   )
+  
+  sunriseSunsetDataSubset =  sunriseSunsetDataSubset[, metaSunriseSunset$colname]
   
   
   # Filter echo data
