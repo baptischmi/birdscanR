@@ -40,6 +40,7 @@
 #' will be excluded.
 #' @param filePath If given, the data-list is saved as RDS.
 #' @param tagOutputFile Vector of two elements for prefix & suffix to file name, given 'filePath' is not NULL.
+#' @param saveCSV if true, save tables as CSV in a folder nested in 'filePath'.
 #' 
 #' @return Returns filtered data table - echo, protocol, blindTimes, sunriseSunset, 
 #' radarSite - and necessary parameters as input for \code{computeMTR}.
@@ -65,7 +66,8 @@ compileData = function(
                       altitudeRange_AGL  = NULL, 
                       echoValidator      = FALSE,
                       filePath           = NULL,
-                      tagOutputFile      = c(NULL, NULL)
+                      tagOutputFile      = c(NULL, NULL),
+                      saveCSV            = FALSE
                       ){
   
   # set the time window
@@ -491,7 +493,7 @@ compileData = function(
     
     # Save CSV
     # =========================================================================
-    if(saveCSV){
+    if(saveCSV  && length(filePath) == 1){
       csvDirPath = file.path(filePath, fileName)
       
       # Create a directory to store the CSV files (optional)
