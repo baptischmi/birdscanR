@@ -430,7 +430,7 @@ compileData = function(
     if (!is.null(timeRangeTargetTZ) && length(timeRangeTargetTZ) == 2){
       startTime = format(timeRangeTargetTZ[1], "%Y%m%d")
       stopTime = format(timeRangeTargetTZ[2], "%Y%m%d")
-      time = paste(startTime, stopTime, sep = "to")
+      time = paste("time", startTime, "to", stopTime, sep = "")
       fileName = paste(fileName, time, sep = "_")
     } 
     
@@ -439,7 +439,7 @@ compileData = function(
     if (!is.null(altitudeRange_AGL) && length(altitudeRange_AGL) == 2){
       altitudeRangeStart = altitudeRange_AGL[1]
       altitudeRangeStop = paste0(altitudeRange_AGL[2], "m")
-      altitude = paste(altitudeRangeStart, altitudeRangeStop, sep = "to")
+      altitude = paste("alt", altitudeRangeStart, "to", altitudeRangeStop, sep = "")
       fileName = paste(fileName, altitude, sep = "_")
     }
     
@@ -462,6 +462,7 @@ compileData = function(
     # classSelection for fileName
     # =========================================================================
     if (!is.null(classSelection)){
+      classAbbreviations = birdScanR::classAbbreviations
       classAbbreviations$class <- trimws(classAbbreviations$class, which = "right")
       classAbbreviations$abbr <- trimws(classAbbreviations$abbr, which = "right")
       classes = paste(classAbbreviations$abbr[which(classAbbreviations$class %in% 
