@@ -2,6 +2,7 @@
 
 export(QUERY)
 export(addDayNightInfoPerEcho)
+export(compileData)
 export(computeDensity)
 export(computeMTR)
 export(convertTimeZone)
