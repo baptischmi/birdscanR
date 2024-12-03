@@ -1,13 +1,5 @@
 #### compileData -----------------------------------------------------------
 #' @title compileData
-#' @author Baptiste Schmid, \email{baptiste.schmid@@vogelwarte.ch};
-#' Birgen Haest, \email{birgen.haest@@vogelwarte.ch};
-#' @description The function \code{compileData} creates a standardized Birdscan 
-#' MR1 data product, including metadata, that can be used to publish the 
-#' dataset in a standardized manner. This results in improved accessibility 
-#' across datasets and owners. The function uses the output from 
-#' \code{extractDbData} and allows for specific filtering of the dataset, 
-#' e.g., by time range, pulse type, and class.
 #' @param echoData dataframe with the echo data from the data list created by 
 #' the function \code{extractDBData}.
 #' @param protocolData dataframe with the protocol data from the data list created by
@@ -17,7 +9,6 @@
 #' the function \code{loadManualBlindTimes}. 
 #' It include the automated blind times induced by changes in measurment protocol, 
 #' and blind time added manually to remove periods of incoherent data collection.
-#' @param radarSiteData dataframe/vector with the database site table
 #' @param dbName Name of the database. Can be a useful meta data.
 #' @param pulseTypeSelection character vector with the pulse types which should 
 #' be included in the subset. Options: “S”, “M”, “L”, i.e. short-, medium-, long-pulse, respectively. 
@@ -72,6 +63,9 @@ compileData = function(
                       ){
   
   # set the time window
+  if(!is.Date(timeRangeTargetTZ) | !is.POSIXt(timeRangeTargetTZ)){
+    timeRangeTargetTZ = as.POSIXct(timeRangeTargetTZ, tz = targetTimeZone)
+  }
   startTime = timeRangeTargetTZ[1]
   stopTime  = timeRangeTargetTZ[2]
   
@@ -311,7 +305,6 @@ compileData = function(
   # restrict the time range on sunStart and sunStop
   TimesInd = (sunriseSunsetData$sunStart < stopTime) & 
     (sunriseSunsetData$sunStop > startTime)
-  sunriseSunsetDataSubset =  sunriseSunsetData[TimesInd, ]
   # ToDo: use the twilight function if no dataset is included, but the site table include the necessary info on location.
   
   #-----------------------------------------------------------------------------
@@ -353,8 +346,10 @@ compileData = function(
                                   classSelection    = classSelection, 
                                   classProbCutOff   = classProbCutOff, 
                                   altitudeRange_AGL = altitudeRange_AGL, 
-                                  manualBlindTimes  = blindTimesDataSubset[which(blindTimesDataSubset$type != "protocolChange"), ], 
                                   echoValidator     = echoValidator) 
+  if(nrow(echoDataSubset) == 0) {
+    warning(paste0("No echo remaining in the filtered data. Check 'TimeRange' and 'manualBlindTimes', or other filters such as 'pulse-type', 'classSelection', 'altitudeRange'"))
+  }
   
   #-----------------------------------------------------------------------------
   # meta data
@@ -429,8 +424,6 @@ compileData = function(
     # time range for fileName
     # =========================================================================
     if (!is.null(timeRangeTargetTZ) && length(timeRangeTargetTZ) == 2){
-      startTime = format(timeRangeTargetTZ[1], "%Y%m%d")
-      stopTime = format(timeRangeTargetTZ[2], "%Y%m%d")
       time = paste("time", startTime, "to", stopTime, sep = "")
       fileName = paste(fileName, time, sep = "_")
     } 
