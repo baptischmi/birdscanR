@@ -1,5 +1,10 @@
 #### compileData -----------------------------------------------------------
 #' @title compileData
+#' @author Baptiste Schmid, \email{baptiste.schmid@@vogelwarte.ch}
+#' @description The function \code{compileData} aim to filter database-extracts and 
+#' save metadata used to compute MTR \code{computeMTR}. The function \code{compileData} 
+#' is a list of filtered data and parameters. It takes the output from \code{extractDbData} 
+#' and trunk the needed dataset to the restricted settings, e.g. time frame, pulse type.
 #' @param echoData dataframe with the echo data from the data list created by 
 #' the function \code{extractDBData}.
 #' @param protocolData dataframe with the protocol data from the data list created by
@@ -9,6 +14,7 @@
 #' the function \code{loadManualBlindTimes}. 
 #' It include the automated blind times induced by changes in measurment protocol, 
 #' and blind time added manually to remove periods of incoherent data collection.
+#' @param radrSiteData
 #' @param dbName Name of the database. Can be a useful meta data.
 #' @param pulseTypeSelection character vector with the pulse types which should 
 #' be included in the subset. Options: “S”, “M”, “L”, i.e. short-, medium-, long-pulse, respectively. 
@@ -305,6 +311,7 @@ compileData = function(
   # restrict the time range on sunStart and sunStop
   TimesInd = (sunriseSunsetData$sunStart < stopTime) & 
     (sunriseSunsetData$sunStop > startTime)
+  sunriseSunsetDataSubset = sunriseSunsetData[TimesInd, ]
   # ToDo: use the twilight function if no dataset is included, but the site table include the necessary info on location.
   
   #-----------------------------------------------------------------------------
@@ -346,6 +353,7 @@ compileData = function(
                                   classSelection    = classSelection, 
                                   classProbCutOff   = classProbCutOff, 
                                   altitudeRange_AGL = altitudeRange_AGL, 
+                                  manualBlindTimes  = blindTimesDataSubset, #blindTimesDataSubset[which(blindTimesDataSubset$type != "protocolChange"), ], 
                                   echoValidator     = echoValidator) 
   if(nrow(echoDataSubset) == 0) {
     warning(paste0("No echo remaining in the filtered data. Check 'TimeRange' and 'manualBlindTimes', or other filters such as 'pulse-type', 'classSelection', 'altitudeRange'"))
@@ -424,6 +432,8 @@ compileData = function(
     # time range for fileName
     # =========================================================================
     if (!is.null(timeRangeTargetTZ) && length(timeRangeTargetTZ) == 2){
+      startTime = format(startTime, "%Y%m%d")
+      stopTime = format(stopTime, "%Y%m%d")
       time = paste("time", startTime, "to", stopTime, sep = "")
       fileName = paste(fileName, time, sep = "_")
     } 
