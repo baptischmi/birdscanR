@@ -33,10 +33,13 @@ computeObservationTime = function(timeBins,
   
 # Make sure protocol entries are not overlapping (should not happen)
 # =============================================================================
-  overlaps = protocolData$startTime_targetTZ[2:length(protocolData[, 1])] < 
-              protocolData$stopTime_targetTZ[1:(length(protocolData[, 1])-1)]
-  protocolData$stopTime_targetTZ[c(overlaps, FALSE)] = 
-             protocolData$startTime_targetTZ[c(FALSE, overlaps)]
+  if(length(protocolData[, 1]) > 1){
+    overlaps = protocolData$startTime_targetTZ[2:length(protocolData[, 1])] < 
+                protocolData$stopTime_targetTZ[1:(length(protocolData[, 1])-1)]
+    protocolData$stopTime_targetTZ[c(overlaps, FALSE)] = 
+               protocolData$startTime_targetTZ[c(FALSE, overlaps)]    
+  }
+
   
 # Add 'timeBinId' column to protocolData and blindTimes
 # =============================================================================
@@ -211,6 +214,7 @@ computeObservationTime = function(timeBins,
   # observation time (operationtime - blindtime)
   # ===========================================================================
     timeBins$observationTime_sec = timeBins$operationTime_sec - timeBins$blindTime_sec
+    timeBins$observationTime_sec[timeBins$observationTime_sec < 0] = 0 # set to zero any negative values
     timeBins$observationTime_h   = timeBins$observationTime_sec / (60*60)
     timeBins$proportionalTimeObserved[timeBins$duration_sec > 0]  = timeBins$observationTime_sec[timeBins$duration_sec > 0] / 
                                                                      timeBins$duration_sec[timeBins$duration_sec > 0]
