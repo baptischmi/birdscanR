@@ -1,0 +1,9 @@
+pandoc: 3.1.11
+pkgdown: 2.1.2
+pkgdown_sha: ~
+articles:
+  birdscanR: birdscanR.html
+last_built: 2025-05-15T13:24Z
+urls:
+  reference: https://birdscancommunity.github.io/birdscanR/reference
+  article: https://birdscancommunity.github.io/birdscanR/articles
