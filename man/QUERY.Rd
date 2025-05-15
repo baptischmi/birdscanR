@@ -7,9 +7,9 @@
 QUERY(dbConnection, dbDriverChar, query, as.is = FALSE)
 }
 \arguments{
-\item{dbConnection}{a valid  database connection}
+\item{dbConnection}{A valid database connection.}
 
-\item{dbDriverChar}{the name of the driver}
+\item{dbDriverChar}{This was the name of the driver, and is now automatically detected, therefore it should be omitted into the future.}
 
 \item{query}{an 'SQL' string with your query}
 
@@ -19,31 +19,48 @@ QUERY(dbConnection, dbDriverChar, query, as.is = FALSE)
 the result of the query
 }
 \description{
-Run an 'SQL' query on an already connected database
+Run an 'SQL' query on an already connected database.
 }
 \examples{
 \dontrun{
 # Set server and database settings
 # ===========================================================================
-  dbServer       = "MACHINE\\\\SERVERNAME"   # Set the name of your SQL server
-  dbName         = "db_Name"               # Set the name of your database
-  dbDriverChar   = "SQL Server"            # Set either "SQL Server" or "PostgreSQL"
+dbServer = "MACHINE\\\\SERVERNAME" # Set the name of your SQL server
+dbName = "db_Name" # Set the name of your database
+dbDriverChar = "SQL Server" # Set either "SQL Server" or "PostgreSQL"
 
 # Open the connection with the database
 # ===========================================================================
-  dsn = paste0("driver=", dbDriverChar, ";server=", dbServer,
-               ";database=", dbName,
-               ";uid=", rstudioapi::askForPassword("Database user"),
-               ";pwd=", rstudioapi::askForPassword("Database password"))
-  dbConnection = RODBC::odbcDriverConnect(dsn)
-  
-  QUERY(dbConnection = dbConnection,
-        dbDriverChar = dbDriverChar,
-        query        = "Select * From collection order by row asc")
+dsn = paste0(
+  "driver=", dbDriverChar, ";server=", dbServer,
+  ";database=", dbName,
+  ";uid=", rstudioapi::askForPassword("Database user"),
+  ";pwd=", rstudioapi::askForPassword("Database password")
+)
+dbConnection = RODBC::odbcDriverConnect(dsn)
+
+QUERY(
+  dbConnection = dbConnection,
+  query = "Select * From collection order by row asc"
+)
 }
-  
+
+}
+\seealso{
+Other read SQL database functions: 
+\code{\link{extractDbData}()},
+\code{\link{getBatClassification}()},
+\code{\link{getCollectionTable}()},
+\code{\link{getEchoFeatures}()},
+\code{\link{getEchoValidationTable}()},
+\code{\link{getProtocolTable}()},
+\code{\link{getRadarTable}()},
+\code{\link{getRfClassification}()},
+\code{\link{getSiteTable}()},
+\code{\link{getTimeBinsTable}()},
+\code{\link{getVisibilityTable}()}
 }
 \author{
-Fabian Hertner, \email{fabian.hertner@swiss-birdradar.com};
-Birgen Haest, \email{birgen.haest@vogelwarte.ch}
+Fabian Hertner, Birgen Haest
 }
+\concept{read SQL database functions}

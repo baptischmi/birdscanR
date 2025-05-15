@@ -1,5 +1,5 @@
-#' Example file on how to include manual blind times for your 'Birdscan MR1' 
-#' database. 
+#' Example file on how to include manual blind times for your 'Birdscan MR1'
+#' database.
 #'
 #' To create your own manual blind times file, just copy this file, and adjust.
 #'
@@ -7,9 +7,10 @@
 #'
 #' @usage data(manualBlindTimes)
 #'
-#' @format An object of class \code{"data.frame"}.
+#' @format An object of class `data.frame`.
 #'
 #' @keywords datasets
+#' @family sample data
 #'
 #' @examples
 #' data(manualBlindTimes)

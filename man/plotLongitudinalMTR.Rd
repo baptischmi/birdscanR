@@ -16,7 +16,7 @@ plotLongitudinalMTR(
 )
 }
 \arguments{
-\item{mtr}{data frame with MTR values created by the function ‘computeMTR’.}
+\item{mtr}{data frame with MTR values created by \code{\link[=computeMTR]{computeMTR()}}.}
 
 \item{maxMTR}{optional numeric variable, fixes the maximum value of the
 y-Scale of the plot to the given value. If negative or not set, the y-Scale
@@ -42,7 +42,7 @@ computed for each time bin, the parameter is ignored.}
 should be plotted.}
 
 \item{filePath}{character string, path of the directory where the plot
-should be saved. The function ‘savePlotToFile’ is used to save the plots as
+should be saved. \code{\link[=savePlotToFile]{savePlotToFile()}} is used to save the plots as
 png files with an auto-generated filename.}
 }
 \value{
@@ -58,80 +58,94 @@ negative bars.
 \dontrun{
 # Set server, database, and other input settings
 # ===========================================================================
-  dbServer       = "MACHINE\\\\SERVERNAME" # Set the name of your SQL server
-  dbName         = "db_Name"               # Set the name of your database
-  dbDriverChar   = "SQL Server"            # Set either "SQL Server" or "PostgreSQL"
-  mainOutputDir  = file.path(".", "results")
-  radarTimeZone  = "Etc/GMT0"
-  targetTimeZone = "Etc/GMT0"
-  listOfRfFeaturesToExtract = c(167, 168)
-  siteLocation   = c(47.494427, 8.716432)
-  sunOrCivil     = "civil"
-  timeRangeData       = c("2021-01-15 00:00", "2021-01-31 00:00")
- 
+dbServer = "MACHINE\\\\SERVERNAME" # Set the name of your SQL server
+dbName = "db_Name" # Set the name of your database
+dbDriverChar = "SQL Server" # Set either "SQL Server" or "PostgreSQL"
+mainOutputDir = file.path(".", "results")
+radarTimeZone = "Etc/GMT0"
+targetTimeZone = "Etc/GMT0"
+listOfRfFeaturesToExtract = c(167, 168)
+siteLocation = c(47.494427, 8.716432)
+sunOrCivil = "civil"
+timeRangeData = c("2021-01-15 00:00", "2021-01-31 00:00")
+
 # Get data
 # ===========================================================================
-  dbData = extractDbData(dbDriverChar                   = dbDriverChar,
-                         dbServer                       = dbServer, 
-                         dbName                         = dbName, 
-                         saveDbToFile                   = TRUE,
-                         dbDataDir                      = mainOutputDir,
-                         radarTimeZone                  = radarTimeZone,
-                         targetTimeZone                 = targetTimeZone,
-                         listOfRfFeaturesToExtract      = listOfRfFeaturesToExtract,
-                         siteLocation                   = siteLocation, 
-                         sunOrCivil                     = sunOrCivil)
-                         
-# Get sunrise/sunset 
+dbData = extractDbData(
+  dbDriverChar = dbDriverChar,
+  dbServer = dbServer,
+  dbName = dbName,
+  saveDbToFile = TRUE,
+  dbDataDir = mainOutputDir,
+  radarTimeZone = radarTimeZone,
+  targetTimeZone = targetTimeZone,
+  listOfRfFeaturesToExtract = listOfRfFeaturesToExtract,
+  siteLocation = siteLocation,
+  sunOrCivil = sunOrCivil
+)
+
+# Get sunrise/sunset
 # ===========================================================================
-  sunriseSunset = twilight(timeRange = timeRangeData,
-                           latLon    = c(47.494427, 8.716432),
-                           timeZone  = targetTimeZone)
-                          
+sunriseSunset = twilight(
+  timeRange = timeRangeData,
+  latLon = c(47.494427, 8.716432),
+  timeZone = targetTimeZone
+)
+
 # Get manual blind times
 # ===========================================================================
-  data(manualBlindTimes)
-  cManualBlindTimes = manualBlindTimes
+data(manualBlindTimes)
+cManualBlindTimes = manualBlindTimes
 
 # Compute migration traffic rate
 # ===========================================================================
-  classSelection.mtr = c("insect")
-  mtrData = computeMTR(dbName                      = dbName, 
-                       echoes                      = dbData$echoData, 
-                       classSelection              = classSelection.mtr, 
-                       altitudeRange               = c(25, 1025),
-                       altitudeBinSize             = 50,
-                       timeRange                   = timeRangeData, 
-                       timeBinDuration_sec         = 1800,
-                       timeZone                    = targetTimeZone,
-                       sunriseSunset               = sunriseSunset,
-                       sunOrCivil                  = "civil",
-                       protocolData                = dbData$protocolData, 
-                       visibilityData              = dbData$visibilityData,
-                       manualBlindTimes            = cManualBlindTimes,
-                       saveBlindTimes              = FALSE,
-                       blindTimesOutputDir         = getwd(),
-                       blindTimeAsMtrZero          = NULL,
-                       propObsTimeCutoff           = 0, 
-                       computePerDayNight          = FALSE, 
-                       computeAltitudeDistribution = TRUE)
+classSelection.mtr = c("insect")
+mtrData = computeMTR(
+  dbName = dbName,
+  echoes = dbData$echoData,
+  classSelection = classSelection.mtr,
+  altitudeRange = c(25, 1025),
+  altitudeBinSize = 50,
+  timeRange = timeRangeData,
+  timeBinDuration_sec = 1800,
+  timeZone = targetTimeZone,
+  sunriseSunset = sunriseSunset,
+  sunOrCivil = "civil",
+  protocolData = dbData$protocolData,
+  visibilityData = dbData$visibilityData,
+  manualBlindTimes = cManualBlindTimes,
+  saveBlindTimes = FALSE,
+  blindTimesOutputDir = getwd(),
+  blindTimeAsMtrZero = NULL,
+  propObsTimeCutoff = 0,
+  computePerDayNight = FALSE,
+  computeAltitudeDistribution = TRUE
+)
 
-# Make Plot 
+# Make Plot
 # ===========================================================================
-  timeRangePlot = list(c("2021-01-15 00:00", "2021-01-22 00:00"),
-                       c("2021-01-23 00:00", "2021-01-31 00:00"))
-  plotExplorationplotLongitudinalMTR(mtr               = mtrData, 
-                                     maxMTR            = -1, 
-                                     timeRange         = timeRangePlot,
-                                     targetTimeZone    = "Etc/GMT0",
-                                     plotClass         = "allClasses",
-                                     propObsTimeCutoff = 0.2,
-                                     plotSpread        = TRUE, 
-                                     filePath          = "./") 
+timeRangePlot = list(
+  c("2021-01-15 00:00", "2021-01-22 00:00"),
+  c("2021-01-23 00:00", "2021-01-31 00:00")
+)
+plotExplorationplotLongitudinalMTR(
+  mtr = mtrData,
+  maxMTR = -1,
+  timeRange = timeRangePlot,
+  targetTimeZone = "Etc/GMT0",
+  plotClass = "allClasses",
+  propObsTimeCutoff = 0.2,
+  plotSpread = TRUE,
+  filePath = "./"
+)
 }
 
+}
+\seealso{
+Other plot functions: 
+\code{\link{plotExploration}()}
 }
 \author{
-Fabian Hertner, \email{fabian.hertner@swiss-birdradar.com};
-Birgen Haest, \email{birgen.haest@vogelwarte.ch}
+Fabian Hertner, Birgen Haest
 }
+\concept{plot functions}

@@ -7,39 +7,40 @@
 getManualVisibilityTable(dbConnection, dbDriverChar)
 }
 \arguments{
-\item{dbConnection}{a valid  database connection}
+\item{dbConnection}{A valid database connection.}
 
-\item{dbDriverChar}{the name of the driver. If different from 'PostgreSQL'
-it connects to cloud.birdradar.com}
+\item{dbDriverChar}{This was the name of the driver, and is now automatically detected, therefore it should be omitted into the future.}
 }
 \value{
-A dataframe with the manual visibility table
+A \code{data.frame} with the manual visibility table.
 }
 \description{
-load visibility table from an already connected 'Birdscan MR1'
-'SQL' database
+Load visibility table from an already connected 'Birdscan MR1'
+'SQL' database.
 }
 \examples{
 \dontrun{
 # Set server and database settings
 # ===========================================================================
-  dbServer       = "MACHINE\\\\SERVERNAME"     # Set the name of your SQL server
-  dbName         = "db_Name"                   # Set the name of your database
-  dbDriverChar   = "SQL Server"                # Set either "SQL Server" or "PostgreSQL"
+dbServer = "MACHINE\\\\SERVERNAME" # Set the name of your SQL server
+dbName = "db_Name" # Set the name of your database
+dbDriverChar = "SQL Server" # Set either "SQL Server" or "PostgreSQL"
 
 # Open the connection with the database
 # ===========================================================================
-  dsn = paste0("driver=", dbDriverChar, ";server=", dbServer,
-               ";database=", dbName,
-               ";uid=", rstudioapi::askForPassword("Database user"),
-               ";pwd=", rstudioapi::askForPassword("Database password"))
-  dbConnection = RODBC::odbcDriverConnect(dsn)
+dsn = paste0(
+  "driver=", dbDriverChar, ";server=", dbServer,
+  ";database=", dbName,
+  ";uid=", rstudioapi::askForPassword("Database user"),
+  ";pwd=", rstudioapi::askForPassword("Database password")
+)
+dbConnection = RODBC::odbcDriverConnect(dsn)
 
-manualVisibilityTable = getManualVisibilityTable(dbConnection, dbDriverChar)
+manualVisibilityTable = getManualVisibilityTable(dbConnection)
 }
 
 }
 \author{
-Baptiste Schmid \email{baptiste.schmid@vogelwarte.ch}; Birgen Haest
-\email{birgen.haest@vogelwarte.ch}
+Baptiste Schmid, Birgen Haest
 }
+\concept{read file functions}

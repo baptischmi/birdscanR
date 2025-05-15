@@ -29,13 +29,27 @@ dawn and dusk for each day over a given time range.
 }
 \examples{
 \dontrun{
-sunrisesunset = twilight(timeRange = c("2021-01-15 00:00", 
-                                       "2021-01-31 00:00"),
-                         latLon    = c(47.494427, 8.716432),
-                         timeZone  = "Etc/GMT0")
+sunrisesunset = twilight(
+  timeRange = c(
+    "2021-01-15 00:00",
+    "2021-01-31 00:00"
+  ),
+  latLon = c(47.494427, 8.716432),
+  timeZone = "Etc/GMT0"
+)
 }
+}
+\seealso{
+Other manipulation functions: 
+\code{\link{addDayNightInfoPerEcho}()},
+\code{\link{computeDensity}()},
+\code{\link{computeMTR}()},
+\code{\link{convertTimeZone}()},
+\code{\link{createVPTS}()},
+\code{\link{mergeVisibilityAndManualBlindTimes}()},
+\code{\link{reclassToBats}()}
 }
 \author{
-Fabian Hertner, \email{fabian.hertner@swiss-birdradar.com};
-Birgen Haest, \email{birgen.haest@vogelwarte.ch}
+Fabian Hertner, Birgen Haest
 }
+\concept{manipulation functions}

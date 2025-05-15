@@ -32,9 +32,8 @@ computeDensity(
 \item{dbName}{Character string, containing the name of the database you are
 processing}
 
-\item{echoes}{dataframe with the echo data from the data list created by the
-function ‘extractDBData’ or a subset of it created by the function
-‘filterEchoData’.}
+\item{echoes}{dataframe with the echo data from the data list created with
+\code{\link[=extractDbData]{extractDbData()}} or a subset of it created by the function}
 
 \item{classSelection}{character string vector with all classes which should
 be used to calculate the density. The density and number of Echoes will be calculated
@@ -55,7 +54,7 @@ values <= 0 a duration of 1 hour will be set}
 e.g. "Etc/GMT0"}
 
 \item{sunriseSunset}{dataframe with sunrise/sunset, and civil and nautical
-dawn/dusk. Computed with the function 'twilight'.}
+dawn/dusk. Computed with \code{\link[=twilight]{twilight()}}.}
 
 \item{sunOrCivil}{sunrise/sunset or civil dawn/dusk used to split day and
 night. Supported values: "sun" or "civil". Default: "civil"}
@@ -68,14 +67,14 @@ the time between civil dusk/dawn and sunrise/sunset times to define the
 crepuscular period. Default is "nauticalSolar".}
 
 \item{protocolData}{dataframe with the protocol data from the data list
-created by the function \code{extractDBData} or a subset of it created by the
-function \code{filterProtocolData}.}
+created by \code{\link[=extractDbData]{extractDbData()}} or a subset of it created by the
+function \code{\link[=filterProtocolData]{filterProtocolData()}}.}
 
 \item{visibilityData}{dataframe with the visibility data from the data list
-created by the function ‘extractDBData’.}
+created by \code{\link[=extractDbData]{extractDbData()}}.}
 
 \item{manualBlindTimes}{dataframe with the manual blind times created by the
-function \code{loadManualBlindTimes}.}
+function \code{\link[=loadManualBlindTimes]{loadManualBlindTimes()}}.}
 
 \item{saveBlindTimes}{Logical, determines whether to save the blind times to
 a file. Default: False.}
@@ -86,10 +85,8 @@ blind times to. Default: 'your-working-directory'}
 \item{blindTimeAsMtrZero}{character string vector with the blind time types
 which should be treated as observation time with MTR zero.}
 
-\item{propObsTimeCutoff}{numeric between 0 and 1. If the density is computed per
-day and night, time bins with a proportional observation time smaller than
-propObsTimeCutoff are ignored when combining the time bins. If the density is
-computed for each time bin, the parameter is ignored.}
+\item{propObsTimeCutoff}{numeric between 0 and 1. Time bins with a proportional
+observation time smaller than \code{propObsTimeCutoff} are set to NA.}
 
 \item{computePerDayNight}{logical, TRUE: density is computed per day and night.
 The time bins of each day and night will be combined and the mean density is
@@ -138,27 +135,27 @@ feature37.speed is required for the density calculation.
   sunOrCivil     = "civil"
   crepuscule     = "nauticalSolar"
   timeRangeData  = c("2021-01-15 00:00", "2021-01-31 00:00")
- 
+
 # Get data
 # ===========================================================================
   dbData = extractDbData(dbDriverChar                   = dbDriverChar,
-                         dbServer                       = dbServer, 
-                         dbName                         = dbName, 
+                         dbServer                       = dbServer,
+                         dbName                         = dbName,
                          saveDbToFile                   = TRUE,
                          dbDataDir                      = mainOutputDir,
                          radarTimeZone                  = radarTimeZone,
                          targetTimeZone                 = targetTimeZone,
                          listOfRfFeaturesToExtract      = listOfRfFeaturesToExtract,
-                         siteLocation                   = siteLocation, 
-                         sunOrCivil                     = sunOrCivil, 
+                         siteLocation                   = siteLocation,
+                         sunOrCivil                     = sunOrCivil,
                          crepuscule                     = crepuscule)
-                         
-# Get sunrise/sunset 
+
+# Get sunrise/sunset
 # ===========================================================================
   sunriseSunset = twilight(timeRange = timeRangeData,
                            latLon    = c(47.494427, 8.716432),
                            timeZone  = targetTimeZone)
-                          
+
 # Get manual blind times
 # ===========================================================================
   data(manualBlindTimes)
@@ -167,32 +164,41 @@ feature37.speed is required for the density calculation.
 # Compute migration traffic rate
 # ===========================================================================
   classSelection.density = c("insect")
-  densityData = computeDensity(dbName                       = dbName, 
-                               echoes                       = dbData$echoData, 
-                               classSelection               = classSelection.density, 
+  densityData = computeDensity(dbName                       = dbName,
+                               echoes                       = dbData$echoData,
+                               classSelection               = classSelection.density,
                                altitudeRange                = c(25, 1025),
                                altitudeBinSize              = 50,
-                               timeRange                    = timeRangeData, 
+                               timeRange                    = timeRangeData,
                                timeBinDuration_sec          = 1800,
                                timeZone                     = targetTimeZone,
                                sunriseSunset                = sunriseSunset,
                                sunOrCivil                   = "civil",
                                crepuscule                   = crepuscule,
-                               protocolData                 = dbData$protocolData, 
+                               protocolData                 = dbData$protocolData,
                                visibilityData               = dbData$visibilityData,
                                manualBlindTimes             = cManualBlindTimes,
                                saveBlindTimes               = FALSE,
                                blindTimesOutputDir          = getwd(),
                                blindTimeAsMtrZero           = NULL,
-                               propObsTimeCutoff            = 0, 
+                               propObsTimeCutoff            = 0,
                                computePerDayNight           = FALSE,
-                               computePerDayCrepusculeNight = FALSE 
-                               computeAltitudeDistribution  = TRUE)   
+                               computePerDayCrepusculeNight = FALSE
+                               computeAltitudeDistribution  = TRUE)
 }
 
 }
-\author{
-Birgen Haest, \email{birgen.haest@vogelwarte.ch};
-Fabian Hertner, \email{fabian.hertner@swiss-birdradar.com};
-Baptiste Schmid, \email{baptiste.schmid@vogelwarte.ch};
+\seealso{
+Other manipulation functions: 
+\code{\link{addDayNightInfoPerEcho}()},
+\code{\link{computeMTR}()},
+\code{\link{convertTimeZone}()},
+\code{\link{createVPTS}()},
+\code{\link{mergeVisibilityAndManualBlindTimes}()},
+\code{\link{reclassToBats}()},
+\code{\link{twilight}()}
 }
+\author{
+Birgen Haest, Fabian Hertner, Baptiste Schmid
+}
+\concept{manipulation functions}

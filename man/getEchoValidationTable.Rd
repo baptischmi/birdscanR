@@ -7,38 +7,53 @@
 getEchoValidationTable(dbConnection, dbDriverChar)
 }
 \arguments{
-\item{dbConnection}{a valid  database connection}
+\item{dbConnection}{A valid database connection.}
 
-\item{dbDriverChar}{dbDriverChar 'SQL Server' The name of the driver. Should
-be either 'SQL Server' or 'PostgreSQL'. If 'PostgreSQL', it connects to cloud.birdradar.com}
+\item{dbDriverChar}{This was the name of the driver, and is now automatically detected, therefore it should be omitted into the future.}
 }
 \value{
 A dataframe called echovalidationTable
 }
 \description{
-gets the echoValidationTable from an already connected database
+Gets the echoValidationTable from an already connected database.
 }
 \examples{
 \dontrun{
 # Set server and database settings
 # ===========================================================================
-  dbServer       = "MACHINE\\\\SERVERNAME"     # Set the name of your SQL server
-  dbName         = "db_Name"                   # Set the name of your database
-  dbDriverChar   = "SQL Server"                # Set either "SQL Server" or "PostgreSQL"
+dbServer = "MACHINE\\\\SERVERNAME" # Set the name of your SQL server
+dbName = "db_Name" # Set the name of your database
+dbDriverChar = "SQL Server" # Set either "SQL Server" or "PostgreSQL"
 
 # Open the connection with the database
 # ===========================================================================
-  dsn = paste0("driver=", dbDriverChar, ";server=", dbServer,
-               ";database=", dbName,
-               ";uid=", rstudioapi::askForPassword("Database user"),
-               ";pwd=", rstudioapi::askForPassword("Database password"))
-  dbConnection = RODBC::odbcDriverConnect(dsn)
+dsn = paste0(
+  "driver=", dbDriverChar, ";server=", dbServer,
+  ";database=", dbName,
+  ";uid=", rstudioapi::askForPassword("Database user"),
+  ";pwd=", rstudioapi::askForPassword("Database password")
+)
+dbConnection = RODBC::odbcDriverConnect(dsn)
 
-echovalidationTable = getEchoValidationTable(dbConnection, dbDriverChar)
+echovalidationTable = getEchoValidationTable(dbConnection)
 }
 
+}
+\seealso{
+Other read SQL database functions: 
+\code{\link{QUERY}()},
+\code{\link{extractDbData}()},
+\code{\link{getBatClassification}()},
+\code{\link{getCollectionTable}()},
+\code{\link{getEchoFeatures}()},
+\code{\link{getProtocolTable}()},
+\code{\link{getRadarTable}()},
+\code{\link{getRfClassification}()},
+\code{\link{getSiteTable}()},
+\code{\link{getTimeBinsTable}()},
+\code{\link{getVisibilityTable}()}
 }
 \author{
-Fabian Hertner, \email{fabian.hertner@swiss-birdradar.com};
-Birgen Haest, \email{birgen.haest@vogelwarte.ch}
+Fabian Hertner, Birgen Haest
 }
+\concept{read SQL database functions}

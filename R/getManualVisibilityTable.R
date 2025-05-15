@@ -1,45 +1,48 @@
-#### getManualVisibilityTable -------------------------------------------------
-#' @title  Get manual visibility table
-#' @description load visibility table from an already connected 'Birdscan MR1' 
-#' 'SQL' database
-#' @author Baptiste Schmid \email{baptiste.schmid@@vogelwarte.ch}; Birgen Haest 
-#' \email{birgen.haest@@vogelwarte.ch}
-#' @param dbConnection a valid  database connection
-#' @param dbDriverChar the name of the driver. If different from 'PostgreSQL' 
-#' it connects to cloud.birdradar.com
+#' @title Get manual visibility table
+#' @author Baptiste Schmid, Birgen Haest
+#' @description Load visibility table from an already connected 'Birdscan MR1'
+#' 'SQL' database.
+#' @inheritParams QUERY
 #'
-#' @return A dataframe with the manual visibility table
+#' @return A `data.frame` with the manual visibility table.
+#' @family read file functions
 #' @export
 #' @examples
 #' \dontrun{
 #' # Set server and database settings
 #' # ===========================================================================
-#'   dbServer       = "MACHINE\\SERVERNAME"     # Set the name of your SQL server
-#'   dbName         = "db_Name"                   # Set the name of your database
-#'   dbDriverChar   = "SQL Server"                # Set either "SQL Server" or "PostgreSQL"
+#' dbServer = "MACHINE\\SERVERNAME" # Set the name of your SQL server
+#' dbName = "db_Name" # Set the name of your database
+#' dbDriverChar = "SQL Server" # Set either "SQL Server" or "PostgreSQL"
 #'
 #' # Open the connection with the database
 #' # ===========================================================================
-#'   dsn = paste0("driver=", dbDriverChar, ";server=", dbServer,
-#'                ";database=", dbName,
-#'                ";uid=", rstudioapi::askForPassword("Database user"),
-#'                ";pwd=", rstudioapi::askForPassword("Database password"))
-#'   dbConnection = RODBC::odbcDriverConnect(dsn)
+#' dsn = paste0(
+#'   "driver=", dbDriverChar, ";server=", dbServer,
+#'   ";database=", dbName,
+#'   ";uid=", rstudioapi::askForPassword("Database user"),
+#'   ";pwd=", rstudioapi::askForPassword("Database password")
+#' )
+#' dbConnection = RODBC::odbcDriverConnect(dsn)
 #'
-#' manualVisibilityTable = getManualVisibilityTable(dbConnection, dbDriverChar)
+#' manualVisibilityTable = getManualVisibilityTable(dbConnection)
 #' }
 #'
-getManualVisibilityTable = function(dbConnection, dbDriverChar){
-# load protocol table from local MS-SQL DB
-# ===========================================================================
-  if (dbDriverChar == 'SQL Server'){
-    manualVisibilityTable = QUERY(dbConnection, 
-                                  dbDriverChar, 
-                                  "Select * From visibility_manual order by blind_from asc")
-    
-  } else if (dbDriverChar == 'PostgreSQL'){
-    message("fetching manual visibility table from PostgrSQL not yet implemented")
+getManualVisibilityTable = function(dbConnection, dbDriverChar) {
+  if (!missing(dbDriverChar)) {
+    lifecycle::deprecate_warn("0.4.0", "getManualVisibilityTable(dbDriverChar)")
   }
- 
+  # load protocol table from local MS-SQL DB
+  # ===========================================================================
+  if (class(dbConnection) %in% "RODBC") {
+    manualVisibilityTable = QUERY(
+      dbConnection,
+      query =
+        "SELECT * FROM visibility_manual order by blind_from asc"
+    )
+  } else if (class(dbConnection) %in% "PqConnection") {
+    message("Fetching manual visibility table from PostgrSQL not yet implemented.")
+  }
+
   return(manualVisibilityTable)
 }

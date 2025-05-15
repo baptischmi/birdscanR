@@ -4,52 +4,77 @@
 \alias{getEchoFeatures}
 \title{Get BirdScan echo features}
 \usage{
-getEchoFeatures(dbConnection, dbDriverChar, listOfRfFeaturesToExtract)
+getEchoFeatures(
+  dbConnection,
+  dbDriverChar,
+  listOfRfFeaturesToExtract,
+  echoIDRange = NULL
+)
 }
 \arguments{
-\item{dbConnection}{a valid  database connection}
+\item{dbConnection}{A valid database connection.}
 
-\item{dbDriverChar}{the name of the driver. If different from 'PostgreSQL'
-it connects to cloud.birdradar.com}
+\item{dbDriverChar}{This was the name of the driver, and is now automatically detected, therefore it should be omitted into the future.}
 
 \item{listOfRfFeaturesToExtract}{a list of feature to extract}
+
+\item{echoIDRange}{NULL A two-element vector of integers to subset the rf
+feature extraction to a range of echoIDs. Default is to extract for all echoes.}
 }
 \value{
 A list of the features extracted
 }
 \description{
-load echo rffeature map from 'Birdscan MR1' 'SQL' database
+Load echo rffeature map from 'Birdscan MR1' 'SQL' database.
 }
 \examples{
 \dontrun{
 # Set server and database settings
 # ===========================================================================
-  dbServer       = "MACHINE\\\\SERVERNAME"     # Set the name of your SQL server
-  dbName         = "db_Name"                   # Set the name of your database
-  dbDriverChar   = "SQL Server"                # Set either "SQL Server" or "PostgreSQL"
+dbServer = "MACHINE\\\\SERVERNAME" # Set the name of your SQL server
+dbName = "db_Name" # Set the name of your database
+dbDriverChar = "SQL Server" # Set either "SQL Server" or "PostgreSQL"
 
 # Open the connection with the database
 # ===========================================================================
-  dsn = paste0("driver=", dbDriverChar, ";server=", dbServer,
-               ";database=", dbName,
-               ";uid=", rstudioapi::askForPassword("Database user"),
-               ";pwd=", rstudioapi::askForPassword("Database password"))
-  dbConnection = RODBC::odbcDriverConnect(dsn)
+dsn = paste0(
+  "driver=", dbDriverChar, ";server=", dbServer,
+  ";database=", dbName,
+  ";uid=", rstudioapi::askForPassword("Database user"),
+  ";pwd=", rstudioapi::askForPassword("Database password")
+)
+dbConnection = RODBC::odbcDriverConnect(dsn)
 
 # Set list of Rf features you also want to extract
-# Vector with RF features to extract. Feature IDs can be found in the  
-# 'rfFeatures' table in the sql database.  
+# Vector with RF features to extract. Feature IDs can be found in the
+# 'rfFeatures' table in the sql database.
 # Example: Get wing beat frequency and credibility: c(167, 168)
 # Set to NULL to not extract any.
 # ===========================================================================
-  listOfRfFeaturesToExtract = c(167, 168) 
+listOfRfFeaturesToExtract = c(167, 168)
 
-echoFeatures = getEchoFeatures(dbConnection, dbDriverChar, 
-                               listOfRfFeaturesToExtract)
+echoFeatures = getEchoFeatures(
+  dbConnection,
+  listOfRfFeaturesToExtract
+)
 }
 
+}
+\seealso{
+Other read SQL database functions: 
+\code{\link{QUERY}()},
+\code{\link{extractDbData}()},
+\code{\link{getBatClassification}()},
+\code{\link{getCollectionTable}()},
+\code{\link{getEchoValidationTable}()},
+\code{\link{getProtocolTable}()},
+\code{\link{getRadarTable}()},
+\code{\link{getRfClassification}()},
+\code{\link{getSiteTable}()},
+\code{\link{getTimeBinsTable}()},
+\code{\link{getVisibilityTable}()}
 }
 \author{
-Fabian Hertner, \email{fabian.hertner@swiss-birdradar.com};
-Birgen Haest, \email{birgen.haest@vogelwarte.ch}
+Fabian Hertner, Birgen Haest
 }
+\concept{read SQL database functions}

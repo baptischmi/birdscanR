@@ -11,8 +11,8 @@ filterProtocolData(
 )
 }
 \arguments{
-\item{protocolData}{dataframe with the protocol data from the data list
-created by the function \code{extractDBData}}
+\item{protocolData}{\code{data.frame} with the protocol data from the data list
+created by \code{\link[=extractDbData]{extractDbData()}}}
 
 \item{pulseTypeSelection}{character vector with the pulse types which should
 be included in the subset. Options: “S”, “M”, “L” (short-, medium-,
@@ -27,7 +27,7 @@ returns the filtered protocol data in the same format as provided in
 the parameter \code{protocolData}.
 }
 \description{
-With the function \code{filterProtocolData} the protocol data
+With \code{\link[=filterProtocolData]{filterProtocolData()}} the protocol data
 can be filtered by the operation mode (pulse-type and antenna rotation). The
 function returns the filtered subset of the protocol data which can later be
 used to filter the echoes based on the operation mode/protocol
@@ -36,43 +36,52 @@ used to filter the echoes based on the operation mode/protocol
 \dontrun{
 # Set server, database, and other input settings for data extraction
 # ===========================================================================
-  dbServer       = "MACHINE\\\\SERVERNAME"     # Set the name of your SQL server
-  dbName         = "db_Name"                   # Set the name of your database
-  dbDriverChar   = "SQL Server"                # Set either "SQL Server" or "PostgreSQL"
-  mainOutputDir  = file.path(".", "results")
-  radarTimeZone  = "Etc/GMT0"
-  targetTimeZone = "Etc/GMT0"
-  listOfRfFeaturesToExtract = c(167, 168)
-  siteLocation   = c(47.494427, 8.716432)
-  sunOrCivil     = "civil"
- 
+dbServer = "MACHINE\\\\SERVERNAME" # Set the name of your SQL server
+dbName = "db_Name" # Set the name of your database
+dbDriverChar = "SQL Server" # Set either "SQL Server" or "PostgreSQL"
+mainOutputDir = file.path(".", "results")
+radarTimeZone = "Etc/GMT0"
+targetTimeZone = "Etc/GMT0"
+listOfRfFeaturesToExtract = c(167, 168)
+siteLocation = c(47.494427, 8.716432)
+sunOrCivil = "civil"
+
 # Get data
 # ===========================================================================
-  dbData = extractDbData(dbDriverChar                   = dbDriverChar,
-                         dbServer                       = dbServer, 
-                         dbName                         = dbName, 
-                         saveDbToFile                   = TRUE,
-                         dbDataDir                      = mainOutputDir,
-                         radarTimeZone                  = radarTimeZone,
-                         targetTimeZone                 = targetTimeZone,
-                         listOfRfFeaturesToExtract      = listOfRfFeaturesToExtract,
-                         siteLocation                   = siteLocation, 
-                         sunOrCivil                     = sunOrCivil)
-                         
+dbData = extractDbData(
+  dbDriverChar = dbDriverChar,
+  dbServer = dbServer,
+  dbName = dbName,
+  saveDbToFile = TRUE,
+  dbDataDir = mainOutputDir,
+  radarTimeZone = radarTimeZone,
+  targetTimeZone = targetTimeZone,
+  listOfRfFeaturesToExtract = listOfRfFeaturesToExtract,
+  siteLocation = siteLocation,
+  sunOrCivil = sunOrCivil
+)
+
 # Set input settings for filtering of the data
 # ===========================================================================
-  pulseLengthSelection = "S"
-  rotationSelection    = 1
+pulseLengthSelection = "S"
+rotationSelection = 1
 
 # Filter the echo data
 # ===========================================================================
-  filteredProtocolData = filterProtocolData(protocolData       = dbData$protocolData,
-                                            pulseTypeSelection = pulseLengthSelection, 
-                                            rotationSelection  = rotationSelection)   
+filteredProtocolData = filterProtocolData(
+  protocolData = dbData$protocolData,
+  pulseTypeSelection = pulseLengthSelection,
+  rotationSelection = rotationSelection
+)
 }
 
 }
-\author{
-Fabian Hertner, \email{fabian.hertner@swiss-birdradar.com};
-Birgen Haest, \email{birgen.haest@vogelwarte.ch}
+\seealso{
+Other filter functions: 
+\code{\link{filterData}()},
+\code{\link{filterEchoData}()}
 }
+\author{
+Fabian Hertner, Birgen Haest
+}
+\concept{filter functions}

@@ -10,10 +10,12 @@ extractDbData(
   dbName = NULL,
   dbUser = NULL,
   dbPwd = NULL,
+  dbHost = "cloud.birdradar.com",
   saveDbToFile = FALSE,
   dbDataDir = NULL,
   radarTimeZone = NULL,
   targetTimeZone = "Etc/GMT0",
+  timeInterval = NULL,
   listOfRfFeaturesToExtract = NULL,
   siteLocation = NULL,
   sunOrCivil = "civil",
@@ -33,6 +35,8 @@ cloud.birdradar.com}
 
 \item{dbPwd}{NULL The password for the user name}
 
+\item{dbHost}{"cloud.birdradar.com" The host of the database}
+
 \item{saveDbToFile}{FALSE Set to TRUE if you want to save the extracted
 database data to an rds file. The output filename is automatically set to
 dbName_DataExtract.rds}
@@ -45,6 +49,10 @@ NULL: extract the time zone from the site table of the 'SQL' database.}
 
 \item{targetTimeZone}{"Etc/GMT0" String specifying the target time zone.
 Default is "Etc/GMT0".}
+
+\item{timeInterval}{Null An optional vector of timestamps (either as \code{Date} or \code{POSIXct})
+to limit the the data retrieved from the collections table. The filtering is done
+based on the original radar timezone.}
 
 \item{listOfRfFeaturesToExtract}{NULL or a list of feature to extract}
 
@@ -75,33 +83,49 @@ Load the data from the database or file and save it to file
 \dontrun{
 # Set server, database, and other input settings
 # ===========================================================================
-  dbServer       = "MACHINE\\\\SERVERNAME"     # Set the name of your SQL server
-  dbName         = "db_Name"                   # Set the name of your database
-  dbDriverChar   = "SQL Server"                # Set either "SQL Server" or "PostgreSQL"
-  mainOutputDir  = file.path(".", "results")
-  radarTimeZone  = "Etc/GMT0"
-  targetTimeZone = "Etc/GMT0"
-  listOfRfFeaturesToExtract = c(167, 168)
-  siteLocation   = c(47.494427, 8.716432)
-  sunOrCivil   = "civil"
- 
+dbServer = "MACHINE\\\\SERVERNAME" # Set the name of your SQL server
+dbName = "db_Name" # Set the name of your database
+dbDriverChar = "SQL Server" # Set either "SQL Server" or "PostgreSQL"
+mainOutputDir = file.path(".", "results")
+radarTimeZone = "Etc/GMT0"
+targetTimeZone = "Etc/GMT0"
+listOfRfFeaturesToExtract = c(167, 168)
+siteLocation = c(47.494427, 8.716432)
+sunOrCivil = "civil"
+
 # Get data
 # ===========================================================================
-  dbData = extractDbData(dbDriverChar                   = dbDriverChar,
-                         dbServer                       = dbServer, 
-                         dbName                         = dbName, 
-                         saveDbToFile                   = TRUE,
-                         dbDataDir                      = mainOutputDir,
-                         radarTimeZone                  = radarTimeZone,
-                         targetTimeZone                 = targetTimeZone,
-                         listOfRfFeaturesToExtract      = listOfRfFeaturesToExtract,
-                         siteLocation                   = siteLocation, 
-                         sunOrCivil                   = sunOrCivil,
-                         crepuscule                     = "nauticalSolar")
+dbData = extractDbData(
+  dbDriverChar = dbDriverChar,
+  dbServer = dbServer,
+  dbName = dbName,
+  saveDbToFile = TRUE,
+  dbDataDir = mainOutputDir,
+  radarTimeZone = radarTimeZone,
+  targetTimeZone = targetTimeZone,
+  listOfRfFeaturesToExtract = listOfRfFeaturesToExtract,
+  siteLocation = siteLocation,
+  sunOrCivil = sunOrCivil,
+  crepuscule = "nauticalSolar"
+)
 }
 
 }
-\author{
-Fabian Hertner, \email{fabian.hertner@swiss-birdradar.com};
-Birgen Haest, \email{birgen.haest@vogelwarte.ch}
+\seealso{
+Other read SQL database functions: 
+\code{\link{QUERY}()},
+\code{\link{getBatClassification}()},
+\code{\link{getCollectionTable}()},
+\code{\link{getEchoFeatures}()},
+\code{\link{getEchoValidationTable}()},
+\code{\link{getProtocolTable}()},
+\code{\link{getRadarTable}()},
+\code{\link{getRfClassification}()},
+\code{\link{getSiteTable}()},
+\code{\link{getTimeBinsTable}()},
+\code{\link{getVisibilityTable}()}
 }
+\author{
+Fabian Hertner, Birgen Haest
+}
+\concept{read SQL database functions}

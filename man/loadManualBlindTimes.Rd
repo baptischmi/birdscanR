@@ -27,8 +27,8 @@ in the visibility table or in the time_bins table in relation to the time
 bins duration (5min). To be flexible and not fixed to the 5 min time bins
 created by the radar, the visibility table is used in this script. In
 addition to the radar blind times, manual blind times can be defined. Manual
-blind times have to be defined in a csv file and are loaded with the function
-‘loadManualBlindTimes’. A example dataset is available by running:
+blind times have to be defined in a csv file and are loaded with
+\code{\link[=loadManualBlindTimes]{loadManualBlindTimes()}}. An example dataset is available by running:
 \code{data(manualBlindTimes)}
 \code{write.csv(manualBlindTimes, file = 'the output file destination', row.names = F)}
 The file path is defined as a global variable ‘manualBlindTimesFile’. A
@@ -48,19 +48,26 @@ times will be computed.
 \examples{
 \dontrun{
 # load manual blind time example data from birdscanR package
-  data(manualBlindTimes)
-  
+data(manualBlindTimes)
+
 # Save example manual blind times to a file
-  write.csv(manualBlindTimes, file = "manualBlindTimes.csv", row.names = F)
-  
+write.csv(manualBlindTimes, file = "manualBlindTimes.csv", row.names = F)
+
 # Read the manual blind times from file
-  manualBlindTimes.new = loadManualBlindTimes(filePath     = "./manualBlindTimes.csv",
-                                              blindTimesTZ = "ETC/GMT", 
-                                              targetTZ     = "ETC/GMT")
+manualBlindTimes.new = loadManualBlindTimes(
+  filePath = "./manualBlindTimes.csv",
+  blindTimesTZ = "ETC/GMT",
+  targetTZ = "ETC/GMT"
+)
 }
 
 }
-\author{
-Fabian Hertner, \email{fabian.hertner@swiss-birdradar.com};
-Birgen Haest, \email{birgen.haest@vogelwarte.ch}
+\seealso{
+Other sample data: 
+\code{\link{classAbbreviations}},
+\code{\link{manualBlindTimes}}
 }
+\author{
+Fabian Hertner, Birgen Haest
+}
+\concept{sample data}

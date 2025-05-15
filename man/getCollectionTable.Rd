@@ -4,41 +4,60 @@
 \alias{getCollectionTable}
 \title{Get BirdScan collection table}
 \usage{
-getCollectionTable(dbConnection, dbDriverChar)
+getCollectionTable(dbConnection, dbDriverChar, timeInterval = NULL)
 }
 \arguments{
-\item{dbConnection}{a valid  database connection}
+\item{dbConnection}{A valid database connection.}
 
-\item{dbDriverChar}{the name of the driver. If different from 'PostgreSQL'
-it connects to cloud.birdradar.com}
+\item{dbDriverChar}{This was the name of the driver, and is now automatically detected, therefore it should be omitted into the future.}
+
+\item{timeInterval}{Null An optional vector of timestamps (either as \code{Date} or \code{POSIXct})
+to limit the data retrieved from the collections table. The filtering is done
+based on the original radar timezone.}
 }
 \value{
 A dataframe with the collection table
 }
 \description{
-load collection from 'Birdscan MR1' 'SQL' database
+Load collection from 'Birdscan MR1' 'SQL' database.
 }
 \examples{
 \dontrun{
 # Set server and database settings
 # ===========================================================================
-  dbServer       = "MACHINE\\\\SERVERNAME"     # Set the name of your SQL server
-  dbName         = "db_Name"                   # Set the name of your database
-  dbDriverChar   = "SQL Server"                # Set either "SQL Server" or "PostgreSQL"
+dbServer = "MACHINE\\\\SERVERNAME" # Set the name of your SQL server
+dbName = "db_Name" # Set the name of your database
+dbDriverChar = "SQL Server" # Set either "SQL Server" or "PostgreSQL"
 
 # Open the connection with the database
 # ===========================================================================
-dsn = paste0("driver=", dbDriverChar, ";server=", dbServer,
-             ";database=", dbName,
-             ";uid=", rstudioapi::askForPassword("Database user"),
-             ";pwd=", rstudioapi::askForPassword("Database password"))
+dsn = paste0(
+  "driver=", dbDriverChar, ";server=", dbServer,
+  ";database=", dbName,
+  ";uid=", rstudioapi::askForPassword("Database user"),
+  ";pwd=", rstudioapi::askForPassword("Database password")
+)
 dbConnection = RODBC::odbcDriverConnect(dsn)
 
-collectionTable = getCollectionTable(dbConnection, dbDriverChar)
+collectionTable = getCollectionTable(dbConnection)
 }
 
 }
-\author{
-Fabian Hertner, \email{fabian.hertner@swiss-birdradar.com};
-Birgen Haest, \email{birgen.haest@vogelwarte.ch}
+\seealso{
+Other read SQL database functions: 
+\code{\link{QUERY}()},
+\code{\link{extractDbData}()},
+\code{\link{getBatClassification}()},
+\code{\link{getEchoFeatures}()},
+\code{\link{getEchoValidationTable}()},
+\code{\link{getProtocolTable}()},
+\code{\link{getRadarTable}()},
+\code{\link{getRfClassification}()},
+\code{\link{getSiteTable}()},
+\code{\link{getTimeBinsTable}()},
+\code{\link{getVisibilityTable}()}
 }
+\author{
+Fabian Hertner, Birgen Haest, Bart Kranstauber
+}
+\concept{read SQL database functions}
