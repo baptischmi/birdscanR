@@ -1,9 +1,10 @@
-pandoc: 3.1.11
-pkgdown: 2.1.2
+pandoc: 3.8.3
+pkgdown: 2.2.0
 pkgdown_sha: ~
 articles:
   birdscanR: birdscanR.html
-last_built: 2025-05-15T13:24Z
+  extractingSingleTableFromTheSqlDatabase: extractingSingleTableFromTheSqlDatabase.html
+last_built: 2026-06-22T12:12Z
 urls:
   reference: https://birdscancommunity.github.io/birdscanR/reference
   article: https://birdscancommunity.github.io/birdscanR/articles

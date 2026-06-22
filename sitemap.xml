@@ -4,10 +4,12 @@
 <url><loc>https://birdscancommunity.github.io/birdscanR/CONTRIBUTING.html</loc></url>
 <url><loc>https://birdscancommunity.github.io/birdscanR/LICENSE.html</loc></url>
 <url><loc>https://birdscancommunity.github.io/birdscanR/articles/birdscanR.html</loc></url>
+<url><loc>https://birdscancommunity.github.io/birdscanR/articles/extractingSingleTableFromTheSqlDatabase.html</loc></url>
 <url><loc>https://birdscancommunity.github.io/birdscanR/articles/index.html</loc></url>
 <url><loc>https://birdscancommunity.github.io/birdscanR/authors.html</loc></url>
 <url><loc>https://birdscancommunity.github.io/birdscanR/index.html</loc></url>
 <url><loc>https://birdscancommunity.github.io/birdscanR/news/index.html</loc></url>
+<url><loc>https://birdscancommunity.github.io/birdscanR/reference/CH_Sempach_2024_SEP24_25_DataExtract.html</loc></url>
 <url><loc>https://birdscancommunity.github.io/birdscanR/reference/QUERY.html</loc></url>
 <url><loc>https://birdscancommunity.github.io/birdscanR/reference/addDayNightInfoPerEcho.html</loc></url>
 <url><loc>https://birdscancommunity.github.io/birdscanR/reference/birdscanR-package.html</loc></url>
@@ -16,11 +18,14 @@
 <url><loc>https://birdscancommunity.github.io/birdscanR/reference/computeDensity.html</loc></url>
 <url><loc>https://birdscancommunity.github.io/birdscanR/reference/computeMTR.html</loc></url>
 <url><loc>https://birdscancommunity.github.io/birdscanR/reference/convertTimeZone.html</loc></url>
+<url><loc>https://birdscancommunity.github.io/birdscanR/reference/createTimeRangeForPlot.html</loc></url>
 <url><loc>https://birdscancommunity.github.io/birdscanR/reference/createVPTS.html</loc></url>
+<url><loc>https://birdscancommunity.github.io/birdscanR/reference/dbConnectBirdscanSQL.html</loc></url>
 <url><loc>https://birdscancommunity.github.io/birdscanR/reference/extractDbData.html</loc></url>
 <url><loc>https://birdscancommunity.github.io/birdscanR/reference/filterData.html</loc></url>
 <url><loc>https://birdscancommunity.github.io/birdscanR/reference/filterEchoData.html</loc></url>
 <url><loc>https://birdscancommunity.github.io/birdscanR/reference/filterProtocolData.html</loc></url>
+<url><loc>https://birdscancommunity.github.io/birdscanR/reference/filterSpeedFeature37.html</loc></url>
 <url><loc>https://birdscancommunity.github.io/birdscanR/reference/getBatClassification.html</loc></url>
 <url><loc>https://birdscancommunity.github.io/birdscanR/reference/getCollectionTable.html</loc></url>
 <url><loc>https://birdscancommunity.github.io/birdscanR/reference/getEchoFeatures.html</loc></url>
