@@ -24,38 +24,34 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' # Set server and database settings
+#' \donttest{
+#' # Load example data
 #' # ===========================================================================
-#' dbServer = "MACHINE\\SERVERNAME" # Set the name of your SQL server
-#' dbName = "db_Name" # Set the name of your database
-#' dbDriverChar = "SQL Server" # Set either "SQL Server" or "PostgreSQL"
-#'
-#' # Open the connection with the database
-#' # ===========================================================================
-#' dsn = paste0(
-#'   "driver=", dbDriverChar, ";server=", dbServer,
-#'   ";database=", dbName,
-#'   ";uid=", rstudioapi::askForPassword("Database user"),
-#'   ";pwd=", rstudioapi::askForPassword("Database password")
-#' )
-#' dbConnection = RODBC::odbcDriverConnect(dsn)
-#'
-#' # Get visibility table
-#' # ===========================================================================
-#' visibilityTable = getVisibilityTable(dbConnection)
+#' dbData = readRDS(system.file("extdata",
+#'   "CH_Sempach_2024_SEP24_25_DataExtract.rds",
+#'   package = "birdscanR"
+#' ))
 #'
 #' # Get manual blind times
 #' # ===========================================================================
 #' data(manualBlindTimes)
-#' cManualBlindTimes = manualBlindTimes
+#' tmpFile = tempfile(fileext = ".csv")
+#' write.table(manualBlindTimes,
+#'   file = tmpFile, sep = ",",
+#'   row.names = FALSE, col.names = FALSE
+#' )
+#' cManualBlindTimes = loadManualBlindTimes(
+#'   filePath     = tmpFile,
+#'   blindTimesTZ = "Etc/GMT0",
+#'   targetTZ     = "Etc/GMT0"
+#' )
 #'
 #' # Merge manual and automatic blind times
 #' # ===========================================================================
 #' blindTimes = mergeVisibilityAndManualBlindTimes(
-#'   visibilityData = visibilityTable,
+#'   visibilityData   = dbData$visibilityData,
 #'   manualBlindTimes = cManualBlindTimes,
-#'   protocolData = protocolData
+#'   protocolData     = dbData$protocolData
 #' )
 #' }
 #'
@@ -330,20 +326,25 @@ mergeVisibilityAndManualBlindTimes = function(visibilityData,
   }
 
   # Add protocolID to the blindTimes
+  # ============================================================================
+  # THIS was added with commit #8db7e003eee22a4a173166cc23f180a869bb9570 but
+  # messes with computeObservationTime() functionality because of the creation
+  # of an identically-named protocolID variable there, so the new gets renamed
+  # and the function doesn't do what it's supposed to do.
   # =============================================================================
-  overallBlindTimes["protocolID"] = "-1" # will remain -1 if manual blindTime extend over effective operation time of the radar (e.g. if radar shut down for a while during persistant rain, or that this time has been recorded as technical manual blind time)
-  for (i in 1:nrow(protocolData)) { # i <- 4
-
-    # data from the i-th protocol
-    i_protID = protocolData[i, "protocolID"]
-    i_tstart = protocolData[i, "startTime_targetTZ"]
-    i_tstop = protocolData[i, "stopTime_targetTZ"]
-
-    #-------------------------------------
-    # select TechBlind time
-    i_BlindTimeindex <- which(overallBlindTimes$start_targetTZ < i_tstop & overallBlindTimes$stop_targetTZ > i_tstart)
-    overallBlindTimes[i_BlindTimeindex, "protocolID"] = i_protID
-  }
+  # overallBlindTimes["protocolID"] = "-1" # will remain -1 if manual blindTime extend over effective operation time of the radar (e.g. if radar shut down for a while during persistant rain, or that this time has been recorded as technical manual blind time)
+  # for (i in 1:nrow(protocolData)) { # i <- 4
+  #
+  #   # data from the i-th protocol
+  #   i_protID = protocolData[i, "protocolID"]
+  #   i_tstart = protocolData[i, "startTime_targetTZ"]
+  #   i_tstop = protocolData[i, "stopTime_targetTZ"]
+  #
+  #   #-------------------------------------
+  #   # select TechBlind time
+  #   i_BlindTimeindex <- which(overallBlindTimes$start_targetTZ < i_tstop & overallBlindTimes$stop_targetTZ > i_tstart)
+  #   overallBlindTimes[i_BlindTimeindex, "protocolID"] = i_protID
+  # }
 
   # sort overall blind times chronological
   # =============================================================================

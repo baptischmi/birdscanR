@@ -63,7 +63,7 @@ compileData = function(echoData = NULL,
                        tagOutputFile = c(NULL, NULL),
                        saveCSV = FALSE) {
   # set the time window
-  if (!is.Date(timeRangeTargetTZ) | !is.POSIXt(timeRangeTargetTZ)) {
+  if (!inherits(timeRangeTargetTZ, "Date") | !inherits(timeRangeTargetTZ, "POSIXt")) {
     timeRangeTargetTZ = as.POSIXct(timeRangeTargetTZ, tz = targetTimeZone)
   }
   startTime = timeRangeTargetTZ[1]
@@ -384,7 +384,6 @@ compileData = function(echoData = NULL,
   }
 
 
-
   # compile meta data into a list
   # =============================================================================
   ls_metaData <- list(
@@ -395,9 +394,8 @@ compileData = function(echoData = NULL,
     radarSiteData     = metaRadarSiteData,
     filterParameters  = metaFilters,
     database          = dbName, # at the moment, only keep the name of the database, but additional information could be used: version of BirdscanR-package, name of the person who extracted the data, etc.
-    birdscanR         = packageVersion("birdScanR") # classifier version is included in the echo-dataset
+    birdscanR         = utils::packageVersion("birdScanR") # classifier version is included in the echo-dataset
   )
-
 
 
   # Return the filtered protocol and echo data
@@ -531,7 +529,7 @@ compileData = function(echoData = NULL,
         } else {
           # Save as CSV for table elements
           file_path <- file.path(csvDirPath, paste0(name, ".csv"))
-          write.csv(compiledData[[name]], file = file_path, row.names = FALSE)
+          utils::write.csv(compiledData[[name]], file = file_path, row.names = FALSE)
         }
       }
     }

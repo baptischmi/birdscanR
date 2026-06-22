@@ -10,7 +10,7 @@ extractDbData(
   dbName = NULL,
   dbUser = NULL,
   dbPwd = NULL,
-  dbHost = "cloud.birdradar.com",
+  dbPort = 5432,
   saveDbToFile = FALSE,
   dbDataDir = NULL,
   radarTimeZone = NULL,
@@ -24,18 +24,19 @@ extractDbData(
 }
 \arguments{
 \item{dbDriverChar}{'SQL Server' The name of the driver. Should be either
-'SQL Server' or 'PostgreSQL'. If 'PostgreSQL', it connects to
-cloud.birdradar.com}
+'SQL Server' or 'PostgreSQL'.}
 
-\item{dbServer}{NULL The name of the Server}
+\item{dbServer}{NULL The name of the SQL Server. For a 'PostgreSQL' this can
+be a the host address or the internal IP.}
 
-\item{dbName}{NULL The name of the Database}
+\item{dbName}{NULL The name of the SQL database}
 
-\item{dbUser}{NULL The USER name of the Server}
+\item{dbUser}{NULL The username of the SQL server}
 
 \item{dbPwd}{NULL The password for the user name}
 
-\item{dbHost}{"cloud.birdradar.com" The host of the database}
+\item{dbPort}{5432 The dbPort parameter specifies the TCP/IP port number on
+which the PostgreSQL server is listening for connections (default is 5432)}
 
 \item{saveDbToFile}{FALSE Set to TRUE if you want to save the extracted
 database data to an rds file. The output filename is automatically set to
@@ -50,11 +51,13 @@ NULL: extract the time zone from the site table of the 'SQL' database.}
 \item{targetTimeZone}{"Etc/GMT0" String specifying the target time zone.
 Default is "Etc/GMT0".}
 
-\item{timeInterval}{Null An optional vector of timestamps (either as \code{Date} or \code{POSIXct})
+\item{timeInterval}{NULL An optional vector of timestamps (either as \code{Date} or \code{POSIXct})
 to limit the the data retrieved from the collections table. The filtering is done
 based on the original radar timezone.}
 
-\item{listOfRfFeaturesToExtract}{NULL or a list of feature to extract}
+\item{listOfRfFeaturesToExtract}{Either NULL (i.e., don't extract any of the
+rf features), "all" (i.e., extract all rf features) or a vector of the
+feature numbers to extract. Default is NULL.}
 
 \item{siteLocation}{Geographic location of the radar measurements in decimal
 format: c(Latitude, Longitude)}
@@ -83,9 +86,9 @@ Load the data from the database or file and save it to file
 \dontrun{
 # Set server, database, and other input settings
 # ===========================================================================
+dbDriverChar = "SQL Server" # Set either "SQL Server" or "PostgreSQL"
 dbServer = "MACHINE\\\\SERVERNAME" # Set the name of your SQL server
 dbName = "db_Name" # Set the name of your database
-dbDriverChar = "SQL Server" # Set either "SQL Server" or "PostgreSQL"
 mainOutputDir = file.path(".", "results")
 radarTimeZone = "Etc/GMT0"
 targetTimeZone = "Etc/GMT0"
@@ -114,6 +117,7 @@ dbData = extractDbData(
 \seealso{
 Other read SQL database functions: 
 \code{\link{QUERY}()},
+\code{\link{dbConnectBirdscanSQL}()},
 \code{\link{getBatClassification}()},
 \code{\link{getCollectionTable}()},
 \code{\link{getEchoFeatures}()},

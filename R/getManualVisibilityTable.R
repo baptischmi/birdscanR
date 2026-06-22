@@ -10,20 +10,26 @@
 #' @examples
 #' \dontrun{
 #' # Set server and database settings
-#' # ===========================================================================
+#' # ==========================================================================
+#' # Using and Microsoft SQL database
+#' # ========================================================================
 #' dbServer = "MACHINE\\SERVERNAME" # Set the name of your SQL server
 #' dbName = "db_Name" # Set the name of your database
-#' dbDriverChar = "SQL Server" # Set either "SQL Server" or "PostgreSQL"
+#' dbDriverChar = "SQL Server" # Set to "SQL Server"
+#'
+#' # Using a PostgreSQL
+#' # ========================================================================
+#' dbServer = "cloud.birdradar.com" # Set the name or IP of your postgreSQL
+#' dbName = "db_Name" # Set the name of your database
+#' dbDriverChar = "PostgreSQL" # Set to "PostgreSQL"
 #'
 #' # Open the connection with the database
-#' # ===========================================================================
-#' dsn = paste0(
-#'   "driver=", dbDriverChar, ";server=", dbServer,
-#'   ";database=", dbName,
-#'   ";uid=", rstudioapi::askForPassword("Database user"),
-#'   ";pwd=", rstudioapi::askForPassword("Database password")
+#' # ==========================================================================
+#' dbConnection = dbConnectBirdscanSQL(
+#'   dbDriverChar = dbDriverChar,
+#'   dbServer     = dbServer,
+#'   dbName       = dbName,
 #' )
-#' dbConnection = RODBC::odbcDriverConnect(dsn)
 #'
 #' manualVisibilityTable = getManualVisibilityTable(dbConnection)
 #' }
@@ -40,7 +46,7 @@ getManualVisibilityTable = function(dbConnection, dbDriverChar) {
       query =
         "SELECT * FROM visibility_manual order by blind_from asc"
     )
-  } else if (class(dbConnection) %in% "PqConnection") {
+  } else if (class(dbConnection) %in% c("PqConnection", "PostgreSQLConnection")) {
     message("Fetching manual visibility table from PostgrSQL not yet implemented.")
   }
 

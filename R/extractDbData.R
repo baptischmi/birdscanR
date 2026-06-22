@@ -1,14 +1,8 @@
 #' @title Extract DB Data
 #' @description Load the data from the database or file and save it to file
 #' @author Fabian Hertner, Birgen Haest
-#' @param dbDriverChar 'SQL Server' The name of the driver. Should be either
-#' 'SQL Server' or 'PostgreSQL'. If 'PostgreSQL', it connects to
-#' cloud.birdradar.com
-#' @param dbServer NULL The name of the Server
-#' @param dbName NULL The name of the Database
-#' @param dbUser NULL The USER name of the Server
-#' @param dbPwd NULL The password for the user name
-#' @param dbHost "cloud.birdradar.com" The host of the database
+#'
+#' @inheritParams dbConnectBirdscanSQL
 #' @param saveDbToFile FALSE Set to TRUE if you want to save the extracted
 #' database data to an rds file. The output filename is automatically set to
 #' dbName_DataExtract.rds
@@ -18,10 +12,12 @@
 #' NULL: extract the time zone from the site table of the 'SQL' database.
 #' @param targetTimeZone "Etc/GMT0" String specifying the target time zone.
 #' Default is "Etc/GMT0".
-#' @param timeInterval Null An optional vector of timestamps (either as `Date` or `POSIXct`)
+#' @param timeInterval NULL An optional vector of timestamps (either as `Date` or `POSIXct`)
 #' to limit the the data retrieved from the collections table. The filtering is done
 #' based on the original radar timezone.
-#' @param listOfRfFeaturesToExtract NULL or a list of feature to extract
+#' @param listOfRfFeaturesToExtract Either NULL (i.e., don't extract any of the
+#' rf features), "all" (i.e., extract all rf features) or a vector of the
+#' feature numbers to extract. Default is NULL.
 #' @param siteLocation Geographic location of the radar measurements in decimal
 #' format: c(Latitude, Longitude)
 #' @param sunOrCivil optional character variable, Set to “sun” to use
@@ -44,9 +40,9 @@
 #' \dontrun{
 #' # Set server, database, and other input settings
 #' # ===========================================================================
+#' dbDriverChar = "SQL Server" # Set either "SQL Server" or "PostgreSQL"
 #' dbServer = "MACHINE\\SERVERNAME" # Set the name of your SQL server
 #' dbName = "db_Name" # Set the name of your database
-#' dbDriverChar = "SQL Server" # Set either "SQL Server" or "PostgreSQL"
 #' mainOutputDir = file.path(".", "results")
 #' radarTimeZone = "Etc/GMT0"
 #' targetTimeZone = "Etc/GMT0"
@@ -76,7 +72,7 @@ extractDbData = function(dbDriverChar = "SQL Server",
                          dbName = NULL,
                          dbUser = NULL,
                          dbPwd = NULL,
-                         dbHost = "cloud.birdradar.com",
+                         dbPort = 5432,
                          saveDbToFile = FALSE,
                          dbDataDir = NULL,
                          radarTimeZone = NULL,
@@ -104,104 +100,46 @@ extractDbData = function(dbDriverChar = "SQL Server",
 
   # Open the database connection
   # =============================================================================
-  # CASE: "SQL Server"
-  # ===========================================================================
-  if (dbDriverChar == "SQL Server") {
-    # CASE: Username and Password are provided
-    # =======================================================================
-    if (!is.null(dbUser) | !is.null(dbPwd)) {
-      dsn = paste0(
-        "driver=", dbDriverChar, ";server=", dbServer,
-        ";database=", dbName,
-        ";uid=", dbUser,
-        ";pwd=", dbPwd
-      )
-
-      # CASE: Username and Password are NOT provided
-      #       Request the username and pwd via the rstudioAPI
-      # =======================================================================
-    } else {
-      dsn = paste0(
-        "driver=", dbDriverChar, ";server=", dbServer,
-        ";database=", dbName,
-        ";uid=", rstudioapi::askForPassword("Database user"),
-        ";pwd=", rstudioapi::askForPassword("Database password")
-      )
-    }
-
-    dbConnection = RODBC::odbcDriverConnect(dsn)
-
-    # CASE: "PostgreSQL"
-    # ===========================================================================
-  } else if (dbDriverChar == "PostgreSQL") {
-    # CASE: Username and Password are provided
-    # =======================================================================
-    if (!is.null(dbUser) | !is.null(dbPwd)) {
-      dbConnection = DBI::dbConnect("PostgreSQL",
-        host     = dbHost,
-        dbname   = dbName,
-        user     = dbUser,
-        password = dbPwd
-      )
-
-      # CASE: Username and Password are NOT provided
-      #       Request the username and pwd via the rstudioAPI
-      # =======================================================================
-    } else {
-      dbConnection = DBI::dbConnect("PostgreSQL",
-        host     = dbHost,
-        dbname   = dbName,
-        user     = rstudioapi::askForPassword("Database user"),
-        password = rstudioapi::askForPassword("Database password")
-      )
-    }
-  }
-
-  # Check whether there is a connection
-  # =============================================================================
-  if (if (dbDriverChar == "PostgreSQL") {
-    RPostgreSQL::isPostgresqlIdCurrent(dbConnection)
-  } else {
-    dbConnection != -1
-  }) {
-    # Do nothing
-  } else {
-    stop("Could not open database. Make sure to set dbServer, dbName,
-         and credentials right.")
-  }
+  dbConnection = dbConnectBirdscanSQL(
+    dbDriverChar = dbDriverChar,
+    dbServer = dbServer,
+    dbName = dbName,
+    dbUser = dbUser,
+    dbPwd = dbPwd,
+    dbPort = dbPort
+  )
 
   # load collection table
   # =============================================================================
   message("Extracting collection table from DB...")
-  collectionTable = getCollectionTable(dbConnection, dbDriverChar, timeInterval)
+  collectionTable = getCollectionTable(dbConnection, timeInterval)
 
   # load protocol from local MS-SQL DB
   # =============================================================================
   message("Extracting protocol table from DB...")
-  protocolTable = getProtocolTable(dbConnection, dbDriverChar)
+  protocolTable = getProtocolTable(dbConnection)
 
   # load radar from local MS-SQL DB
   # =============================================================================
   message("Extracting radar table from DB...")
-  radarTable = getRadarTable(dbConnection, dbDriverChar)
+  radarTable = getRadarTable(dbConnection)
 
   # load site from local MS-SQL DB
   # =============================================================================
   message("Extracting site table from DB...")
-  siteTable = getSiteTable(dbConnection, dbDriverChar)
+  siteTable = getSiteTable(dbConnection)
 
   # load visibility from local MS-SQL DB
   # =============================================================================
   message("Extracting visibility table from DB...")
-  visibilityData = getVisibilityTable(dbConnection, dbDriverChar)
+  visibilityData = getVisibilityTable(dbConnection)
 
   # load manual visibility from local MS-SQL DB
   # =============================================================================
   message("Extracting MANUAL visibility table from DB...")
   manualVisibilityTable = try(
     getManualVisibilityTable(
-      dbConnection,
-      dbDriverChar
+      dbConnection
     ),
     silent = TRUE
   )

@@ -2,7 +2,10 @@
 #' @author Fabian Hertner, Birgen Haest
 #' @description Load echo rffeature map from 'Birdscan MR1' 'SQL' database.
 #' @inheritParams QUERY
-#' @param listOfRfFeaturesToExtract a list of feature to extract
+#' @param listOfRfFeaturesToExtract Either NULL (i.e., don't extract any of the
+#' rf features), "all" (i.e., extract all rf features) or a vector of the
+#' feature numbers to extract. Default is NULL. Feature IDs can be found in the
+#' 'rfFeatures' table in the sql database.
 #' @param echoIDRange NULL A two-element vector of integers to subset the rf
 #' feature extraction to a range of echoIDs. Default is to extract for all echoes.
 #'
@@ -12,26 +15,33 @@
 #' @examples
 #' \dontrun{
 #' # Set server and database settings
-#' # ===========================================================================
+#' # ==========================================================================
+#' # Using and Microsoft SQL database
+#' # ========================================================================
 #' dbServer = "MACHINE\\SERVERNAME" # Set the name of your SQL server
 #' dbName = "db_Name" # Set the name of your database
-#' dbDriverChar = "SQL Server" # Set either "SQL Server" or "PostgreSQL"
+#' dbDriverChar = "SQL Server" # Set to "SQL Server"
+#'
+#' # Using a PostgreSQL
+#' # ========================================================================
+#' dbServer = "cloud.birdradar.com" # Set the name or IP of your postgreSQL
+#' dbName = "db_Name" # Set the name of your database
+#' dbDriverChar = "PostgreSQL" # Set to "PostgreSQL"
 #'
 #' # Open the connection with the database
-#' # ===========================================================================
-#' dsn = paste0(
-#'   "driver=", dbDriverChar, ";server=", dbServer,
-#'   ";database=", dbName,
-#'   ";uid=", rstudioapi::askForPassword("Database user"),
-#'   ";pwd=", rstudioapi::askForPassword("Database password")
+#' # ==========================================================================
+#' dbConnection = dbConnectBirdscanSQL(
+#'   dbDriverChar = dbDriverChar,
+#'   dbServer     = dbServer,
+#'   dbName       = dbName,
 #' )
-#' dbConnection = RODBC::odbcDriverConnect(dsn)
 #'
 #' # Set list of Rf features you also want to extract
 #' # Vector with RF features to extract. Feature IDs can be found in the
 #' # 'rfFeatures' table in the sql database.
 #' # Example: Get wing beat frequency and credibility: c(167, 168)
 #' # Set to NULL to not extract any.
+#' # Set to "all" to extract all features.
 #' # ===========================================================================
 #' listOfRfFeaturesToExtract = c(167, 168)
 #'
@@ -54,6 +64,16 @@ getEchoFeatures = function(dbConnection, dbDriverChar,
     query =
       "SELECT * FROM rffeatures"
   )
+
+  # Set listOfRfFeaturesToExtract to all features if "all" is provided
+  # ===========================================================================
+  if (!is.null(listOfRfFeaturesToExtract)) {
+    if (is.character(listOfRfFeaturesToExtract)) {
+      if (listOfRfFeaturesToExtract == "all") {
+        listOfRfFeaturesToExtract = rffeaturesTable$id
+      }
+    }
+  }
 
   # load 'echo_rffeature_map' table from 'MS-SQL' database
   # ===========================================================================
